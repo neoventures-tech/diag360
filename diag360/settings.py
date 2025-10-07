@@ -29,6 +29,14 @@ env.read_env(os.path.join(BASE_DIR, 'diag360/.env'))
 ENVIRONMENT = env('ENVIRONMENT', default='')
 OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
 
+# Google reCAPTCHA settings
+RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default='')
+RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default='')
+RECAPTCHA_REQUIRED_SCORE = 0.5  # Score mínimo para reCAPTCHA v3 (não usado no v2)
+
+# Configurações adicionais do reCAPTCHA
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']  # Silenciar avisos em desenvolvimento
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
@@ -47,6 +55,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_ai_assistant',
     'formtools',
+    'django_recaptcha',
     'forms',
 ]
 

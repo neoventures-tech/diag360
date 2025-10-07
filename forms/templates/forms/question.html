@@ -53,6 +53,19 @@ SOLV360° - Questão {{ wizard.steps.step1 }} de {{ wizard.steps.count }}
                     {% endfor %}
                 </ul>
             </div>
+        {% elif field.name == 'captcha' %}
+            {# Renderização especial para o campo reCAPTCHA #}
+            <div class="mb-4">
+                <label class="form-label">
+                    {{ field.label }}
+                    {% if field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                <div class="captcha-container">
+                    {{ field }}
+                </div>
+            </div>
         {% else %}
             {# Renderiza campos normais (formulário de contato) #}
             <div class="mb-3">
@@ -100,17 +113,59 @@ SOLV360° - Questão {{ wizard.steps.step1 }} de {{ wizard.steps.count }}
 
 {% block extra_js %}
 <script>
-// Remover validação JavaScript - deixar Django validar
+// Prevenir múltiplas submissões
+let formSubmitted = false;
+
 document.getElementById('wizard-form').addEventListener('submit', function(e) {
     const submitBtn = document.getElementById('submit-btn');
     const loadingSpinner = document.getElementById('loading-spinner');
-    
+
+    // Prevenir submissão duplicada
+    if (formSubmitted) {
+        e.preventDefault();
+        return false;
+    }
+
     // Só ativa loading se for o último passo (botão "Finalizar")
     {% if wizard.steps.last == wizard.steps.current %}
-    submitBtn.disabled = true;
-    loadingSpinner.style.display = 'inline-block';
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processando diagnóstico...';
+    // Verificar se está indo para trás (botão "Anterior")
+    if (!e.submitter || e.submitter.name !== 'wizard_goto_step') {
+        formSubmitted = true;
+        submitBtn.disabled = true;
+        loadingSpinner.style.display = 'inline-block';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processando diagnóstico...';
+    }
     {% endif %}
+});
+
+// Resetar estado em caso de erro de validação
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        formSubmitted = false;
+        const submitBtn = document.getElementById('submit-btn');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+        }
+    }
+});
+
+// Resetar reCAPTCHA quando houver erros de validação
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar se há erros na página (indica resubmissão com erro)
+    const hasErrors = document.querySelector('.alert-danger');
+
+    if (hasErrors && typeof grecaptcha !== 'undefined') {
+        // Resetar todos os widgets reCAPTCHA
+        setTimeout(function() {
+            try {
+                grecaptcha.reset();
+                formSubmitted = false;
+                console.log('reCAPTCHA resetado devido a erro de validação');
+            } catch (e) {
+                console.log('Erro ao resetar reCAPTCHA:', e);
+            }
+        }, 100);
+    }
 });
 
 // Progress bar calculation fix

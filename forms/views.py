@@ -2,6 +2,8 @@ from django import forms as django_forms
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView
 from formtools.wizard.views import SessionWizardView
+from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV2Checkbox
 
 from .ai_assistants import Inova360AIAssistant
 from .models import InnovationEvaluation, Question, Choice, EvaluationAnswer, COMPANY_SIZE
@@ -35,9 +37,137 @@ class CompanyInfoForm(django_forms.Form):
             'placeholder': '(00) 00000-0000'
         })
     )
+    captcha = ReCaptchaField(
+        label='Verificação de Segurança',
+        widget=ReCaptchaV2Checkbox(attrs={
+            'data-theme': 'light',
+        }),
+        error_messages={
+            'required': 'Por favor, complete a verificação de segurança.',
+            'captcha_invalid': 'Erro na verificação. Por favor, tente novamente.',
+            'captcha_error': 'Erro na verificação de segurança. Recarregue a página e tente novamente.',
+        }
+    )
+
+    # Flag para indicar se o captcha já foi validado (será setado pelo wizard)
+    _captcha_already_validated = False
+
+    def clean_captcha(self):
+        """
+        Validação customizada do captcha para evitar erro timeout-or-duplicate.
+        Se o captcha já foi validado anteriormente (flag setada pelo wizard),
+        retorna um valor válido sem validar novamente.
+        """
+        # Se o captcha já foi validado anteriormente, pular validação
+        if self._captcha_already_validated:
+            print("DEBUG [clean_captcha]: Captcha já validado anteriormente - pulando validação")
+            return 'ALREADY_VALIDATED'
+
+        # Caso contrário, validação normal (feita pelo ReCaptchaField)
+        captcha_value = self.cleaned_data.get('captcha')
+        return captcha_value
 
 
 class AssessmentWizard(SessionWizardView):
+
+    def post(self, *args, **kwargs):
+        """
+        Sobrescreve post para marcar captcha como validado na primeira tentativa bem-sucedida.
+        """
+        # Obtém o formulário atual
+        wizard_goto_step = self.request.POST.get('wizard_goto_step', None)
+
+        # Se não está navegando para outro step, é uma submissão normal
+        if not wizard_goto_step:
+            current_step = self.steps.current
+
+            # Se estamos no step company_info, verificar se captcha já foi validado
+            if current_step == 'company_info':
+                # Marcar na sessão que estamos tentando validar o captcha
+                captcha_validated_key = f'{self.prefix}_captcha_validated'
+
+                # Se o captcha já foi validado anteriormente, skipar nova validação
+                if self.request.session.get(captcha_validated_key):
+                    # Remove o campo captcha dos dados POST para evitar revalidação
+                    post_data = self.request.POST.copy()
+                    if f'{current_step}-captcha' in post_data:
+                        # Marcar como já validado
+                        post_data[f'{current_step}-captcha'] = 'ALREADY_VALIDATED'
+                    self.request.POST = post_data
+
+        response = super().post(*args, **kwargs)
+
+        return response
+
+    def get_form(self, step=None, data=None, files=None):
+        """
+        Sobrescreve get_form para substituir o campo captcha quando já foi validado.
+        Isso evita o erro 'timeout-or-duplicate' do reCAPTCHA.
+        """
+        form = super().get_form(step, data, files)
+
+        # Se é o step company_info e o formulário tem captcha
+        if step == 'company_info' and hasattr(form, 'fields') and 'captcha' in form.fields:
+            # Verificar se captcha já foi validado
+            captcha_validated_key = f'{self.prefix}_captcha_validated'
+            captcha_already_validated = self.request.session.get(captcha_validated_key, False)
+
+            print(f"DEBUG [get_form]: Step={step}, Captcha validado anteriormente={captcha_already_validated}")
+
+            if captcha_already_validated:
+                # SUBSTITUIR o ReCaptchaField por um CharField oculto
+                # Isso evita que o ReCaptchaField tente validar o token novamente
+                form.fields['captcha'] = django_forms.CharField(
+                    required=False,
+                    widget=django_forms.HiddenInput(),
+                    initial='ALREADY_VALIDATED'
+                )
+                form._captcha_already_validated = True
+                print("DEBUG [get_form]: Campo captcha substituído por HiddenInput - validação pulada")
+
+        return form
+
+    def get_form_step_data(self, form):
+        """
+        Remove dados do captcha ao armazenar dados do formulário na sessão.
+        Isso garante que um novo captcha seja sempre solicitado.
+        """
+        data = super().get_form_step_data(form)
+        # NÃO remover captcha aqui - será removido em process_step após validação
+        return data
+
+    def process_step(self, form):
+        """
+        Processa o step atual. Remove captcha dos dados armazenados após validação.
+        """
+        current_step = self.steps.current
+
+        # Se é company_info e o form é válido, marcar captcha como validado ANTES do super()
+        if current_step == 'company_info' and form.is_valid():
+            # Verificar se captcha está no cleaned_data do form
+            if 'captcha' in form.cleaned_data:
+                # Marcar na sessão que o captcha foi validado com sucesso
+                captcha_validated_key = f'{self.prefix}_captcha_validated'
+                self.request.session[captcha_validated_key] = True
+                self.request.session.modified = True
+                print(f"DEBUG [process_step]: ✓ Captcha validado com sucesso! Marcado na sessão.")
+
+        # Validação padrão do wizard
+        validated_data = super().process_step(form)
+
+        print(f"DEBUG [process_step]: Step={current_step}, Form válido={form.is_valid()}")
+        print(f"DEBUG [process_step]: Session captcha_validated={self.request.session.get(f'{self.prefix}_captcha_validated', False)}")
+
+        return validated_data
+
+    def render(self, form=None, **kwargs):
+        """
+        Renderiza o formulário. Logs de debug para troubleshooting.
+        """
+        if form and not form.is_valid() and 'captcha' in form.errors:
+            print(f"DEBUG [render]: Erro no captcha detectado: {form.errors['captcha']}")
+
+        return super().render(form, **kwargs)
 
     @classmethod
     def get_initkwargs(cls, *args, **kwargs):
@@ -94,6 +224,12 @@ class AssessmentWizard(SessionWizardView):
 
     def done(self, form_list, **kwargs):
         """Processa as respostas quando o wizard é completado"""
+        # Limpar flag de captcha validado da sessão
+        captcha_validated_key = f'{self.prefix}_captcha_validated'
+        if captcha_validated_key in self.request.session:
+            del self.request.session[captcha_validated_key]
+            self.request.session.modified = True
+
         answers_display = []
         answers_dict = {}  # Para cálculo de pontuação
 
