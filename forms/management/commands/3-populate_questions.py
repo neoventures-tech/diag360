@@ -169,10 +169,7 @@ class Command(BaseCommand):
             },
         ]
 
-        self.stdout.write(self.style.WARNING('Removendo questões e opções existentes...'))
-        Question.objects.all().delete()
-
-        self.stdout.write(self.style.SUCCESS('Criando questões e opções...'))
+        self.stdout.write(self.style.SUCCESS('Atualizando questões e opções...'))
         for q_data in questions_data:
             # Buscar o eixo de avaliação para esta questão
             axis_code = question_axis_mapping.get(q_data['order'])
@@ -185,23 +182,30 @@ class Command(BaseCommand):
                         self.style.WARNING(f'⚠ Eixo {axis_code} não encontrado para questão {q_data["order"]}')
                     )
 
-            question = Question.objects.create(
+            # Cria ou atualiza a questão
+            question, created = Question.objects.update_or_create(
                 order=q_data['order'],
-                field_name=q_data['field_name'],
-                label=q_data['label'],
-                axis=axis,
-                is_active=True
+                defaults={
+                    'field_name': q_data['field_name'],
+                    'label': q_data['label'],
+                    'axis': axis,
+                    'is_active': True
+                }
             )
 
+            # Cria ou atualiza as opções de resposta
             for idx, (value, text) in enumerate(q_data['choices'], start=1):
-                Choice.objects.create(
+                _, choice_created = Choice.objects.update_or_create(
                     question=question,
                     value=value,
-                    text=text,
-                    order=idx
+                    defaults={
+                        'text': text,
+                        'order': idx
+                    }
                 )
 
+            action_verb = 'Criada' if created else 'Atualizada'
             axis_info = f' (Eixo: {axis.name})' if axis else ''
-            self.stdout.write(self.style.SUCCESS(f'✓ Criada questão {question.order}: {question.field_name}{axis_info}'))
+            self.stdout.write(self.style.SUCCESS(f'✓ {action_verb} questão {question.order}: {question.field_name}{axis_info}'))
 
-        self.stdout.write(self.style.SUCCESS(f'\nTotal: {Question.objects.count()} questões criadas com sucesso!'))
+        self.stdout.write(self.style.SUCCESS(f'\n✅ Concluído! Total no banco: {Question.objects.count()} questões.'))

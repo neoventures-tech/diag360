@@ -4,6 +4,8 @@ from django.utils.html import format_html
 from forms.models import (
     MaturityLevel,
     PriorityAction,
+    SalesTrigger,
+    InnovationLevelMaintenance,
     InnovationEvaluation,
     EvaluationAxis,
     AxisScore,
@@ -15,6 +17,20 @@ from forms.models import (
 
 class PriorityActionInline(admin.TabularInline):
     model = PriorityAction
+    extra = 0
+    fields = ['company_size', 'action']
+    ordering = ['company_size']
+
+
+class SalesTriggerInline(admin.TabularInline):
+    model = SalesTrigger
+    extra = 0
+    fields = ['company_size', 'action']
+    ordering = ['company_size']
+
+
+class InnovationLevelMaintenanceInline(admin.TabularInline):
+    model = InnovationLevelMaintenance
     extra = 0
     fields = ['company_size', 'action']
     ordering = ['company_size']
@@ -33,7 +49,7 @@ class MaturityLevelAdmin(admin.ModelAdmin):
     list_filter = ['level_number']
     search_fields = ['name', 'focus', 'description']
     ordering = ['level_number']
-    inlines = [PriorityActionInline]
+    inlines = [PriorityActionInline, SalesTriggerInline, InnovationLevelMaintenanceInline]
     fieldsets = (
         ('Informações do Nível', {
             'fields': ('level_number', 'name', 'min_score', 'max_score')
@@ -54,6 +70,30 @@ class PriorityActionAdmin(admin.ModelAdmin):
     def action_preview(self, obj):
         return obj.action[:100] + '...' if len(obj.action) > 100 else obj.action
     action_preview.short_description = 'Ação Prioritária'
+
+
+@admin.register(SalesTrigger)
+class SalesTriggerAdmin(admin.ModelAdmin):
+    list_display = ['maturity_level', 'company_size', 'action_preview']
+    list_filter = ['maturity_level', 'company_size']
+    search_fields = ['action']
+    ordering = ['maturity_level__level_number', 'company_size']
+
+    def action_preview(self, obj):
+        return obj.action[:100] + '...' if len(obj.action) > 100 else obj.action
+    action_preview.short_description = 'Gatilho de Venda'
+
+
+@admin.register(InnovationLevelMaintenance)
+class InnovationLevelMaintenanceAdmin(admin.ModelAdmin):
+    list_display = ['maturity_level', 'company_size', 'action_preview']
+    list_filter = ['maturity_level', 'company_size']
+    search_fields = ['action']
+    ordering = ['maturity_level__level_number', 'company_size']
+
+    def action_preview(self, obj):
+        return obj.action[:100] + '...' if len(obj.action) > 100 else obj.action
+    action_preview.short_description = 'Ação de Manutenção'
 
 
 @admin.register(EvaluationAxis)

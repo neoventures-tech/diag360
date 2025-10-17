@@ -322,8 +322,22 @@ class AssessmentWizard(SessionWizardView):
         import json
         assistant = Inova360AIAssistant()
 
+        # Cria cópia do report sem os objetos Django (não serializáveis)
+        report_for_ai = {
+            "total_score": report['total_score'],
+            "company_size": report['company_size'],
+            "level_number": report['level_number'],
+            "level_name": report['level_name'],
+            "level_focus": report['level_focus'],
+            "level_description": report['level_description'],
+            "level_range": report['level_range'],
+            "priority_action": report['priority_action'],
+            "sales_trigger": report['sales_trigger'],
+            "maintenance_action": report['maintenance_action'],
+        }
+
         # Formata o relatório como JSON para a IA
-        report_json = json.dumps(report, ensure_ascii=False, indent=2)
+        report_json = json.dumps(report_for_ai, ensure_ascii=False, indent=2)
         ai_output = assistant.run(report_json)
 
         evaluation.ai_analysis = ai_output

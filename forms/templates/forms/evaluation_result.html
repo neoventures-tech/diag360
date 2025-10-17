@@ -752,14 +752,30 @@
 
                 {% load static %}
                 <div class="my-4">
-                    <img src="{% static 'images/solv.png' %}" alt="Solv" class="img-fluid w-100" style="border-radius: 8px;">
+                    {% if 'NEO' in evaluation.sales_trigger.action %}
+                        <img src="{% static 'images/neo.png' %}" alt="NEO" class="img-fluid w-100" style="border-radius: 8px;">
+                    {% elif 'SOLV' in evaluation.sales_trigger.action %}
+                        <img src="{% static 'images/solv.png' %}" alt="SOLV" class="img-fluid w-100" style="border-radius: 8px;">
+                    {% endif %}
                 </div>
 
                 <div class="d-grid my-4">
-                    <a href="/" class="btn btn-primary w-100">
-                        <i class="fas fa-rocket me-2"></i>
-                        Conheça Mais
-                    </a>
+                    {% if 'NEO' in evaluation.sales_trigger.action %}
+                        <a href="https://neoventures.global/" target="_blank" class="btn btn-primary w-100">
+                            <i class="fas fa-rocket me-2"></i>
+                            Conheça Mais
+                        </a>
+                    {% elif 'SOLV' in evaluation.sales_trigger.action %}
+                        <a href="https://solv.network/" target="_blank" class="btn btn-primary w-100">
+                            <i class="fas fa-rocket me-2"></i>
+                            Conheça Mais
+                        </a>
+                    {% else %}
+                        <a href="/" class="btn btn-primary w-100">
+                            <i class="fas fa-rocket me-2"></i>
+                            Conheça Mais
+                        </a>
+                    {% endif %}
                 </div>
 
                 <!-- Ganhos com a implementação -->
