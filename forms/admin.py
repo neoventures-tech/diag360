@@ -5,6 +5,7 @@ from forms.models import (
     MaturityLevel,
     PriorityAction,
     InnovationEvaluation,
+    EvaluationAxis,
     Question,
     Choice,
     EvaluationAnswer
@@ -54,17 +55,49 @@ class PriorityActionAdmin(admin.ModelAdmin):
     action_preview.short_description = 'Ação Prioritária'
 
 
+@admin.register(EvaluationAxis)
+class EvaluationAxisAdmin(admin.ModelAdmin):
+    list_display = ['order', 'name', 'code', 'questions_count', 'updated_at']
+    list_filter = ['created_at']
+    search_fields = ['name', 'code', 'description']
+    ordering = ['order']
+    fieldsets = (
+        ('Informações do Eixo', {
+            'fields': ('name', 'code', 'order')
+        }),
+        ('Descrição', {
+            'fields': ('description',)
+        }),
+    )
+
+    def questions_count(self, obj):
+        return obj.questions.count()
+    questions_count.short_description = 'Nº de Questões'
+
+
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['order', 'field_name', 'label_preview', 'is_active', 'updated_at']
-    list_filter = ['is_active', 'created_at']
+    list_display = ['order', 'field_name', 'axis_name', 'label_preview', 'is_active', 'updated_at']
+    list_filter = ['is_active', 'axis', 'created_at']
     search_fields = ['label', 'field_name']
     ordering = ['order']
     inlines = [ChoiceInline]
+    fieldsets = (
+        ('Informações da Questão', {
+            'fields': ('order', 'field_name', 'axis', 'is_active')
+        }),
+        ('Texto da Pergunta', {
+            'fields': ('label',)
+        }),
+    )
 
     def label_preview(self, obj):
         return obj.label[:80] + '...' if len(obj.label) > 80 else obj.label
     label_preview.short_description = 'Pergunta'
+
+    def axis_name(self, obj):
+        return obj.axis.name if obj.axis else '-'
+    axis_name.short_description = 'Eixo'
 
 
 @admin.register(Choice)

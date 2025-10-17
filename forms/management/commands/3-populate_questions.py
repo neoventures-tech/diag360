@@ -1,11 +1,27 @@
 from django.core.management.base import BaseCommand
-from forms.models import Question, Choice
+from forms.models import Question, Choice, EvaluationAxis
 
 
 class Command(BaseCommand):
     help = 'Popula as questões e opções no banco de dados a partir do forms.py'
 
     def handle(self, *args, **options):
+        # Mapping de cada questão ao seu eixo de avaliação (baseado no xlsx)
+        # Questão 1 (Pergunta direcionadora) não tem eixo
+        question_axis_mapping = {
+            2: 'LEADERSHIP',        # Liderança
+            3: 'STRATEGY',          # Estratégia
+            4: 'GOVERNANCE',        # Governança
+            5: 'RESOURCES',         # Recursos
+            6: 'RESOURCES',         # Recursos
+            7: 'PROCESSES',         # Processos
+            8: 'PROCESSES',         # Processos
+            9: 'PROCESSES',         # Processos
+            10: 'RESULTS',          # Resultados
+            11: 'RESULTS',          # Resultados
+            12: 'RESULTS',          # Resultados
+        }
+
         questions_data = [
             {
                 'order': 1,
@@ -158,10 +174,22 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('Criando questões e opções...'))
         for q_data in questions_data:
+            # Buscar o eixo de avaliação para esta questão
+            axis_code = question_axis_mapping.get(q_data['order'])
+            axis = None
+            if axis_code:
+                try:
+                    axis = EvaluationAxis.objects.get(code=axis_code)
+                except EvaluationAxis.DoesNotExist:
+                    self.stdout.write(
+                        self.style.WARNING(f'⚠ Eixo {axis_code} não encontrado para questão {q_data["order"]}')
+                    )
+
             question = Question.objects.create(
                 order=q_data['order'],
                 field_name=q_data['field_name'],
                 label=q_data['label'],
+                axis=axis,
                 is_active=True
             )
 
@@ -173,6 +201,7 @@ class Command(BaseCommand):
                     order=idx
                 )
 
-            self.stdout.write(self.style.SUCCESS(f'✓ Criada questão {question.order}: {question.field_name}'))
+            axis_info = f' (Eixo: {axis.name})' if axis else ''
+            self.stdout.write(self.style.SUCCESS(f'✓ Criada questão {question.order}: {question.field_name}{axis_info}'))
 
         self.stdout.write(self.style.SUCCESS(f'\nTotal: {Question.objects.count()} questões criadas com sucesso!'))

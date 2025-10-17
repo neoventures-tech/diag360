@@ -196,10 +196,75 @@ class PriorityAction(models.Model):
         return "Não foi possível determinar a ação prioritária."
 
 
+class EvaluationAxis(models.Model):
+    """Eixo de avaliação ISO 56002"""
+    name = models.CharField(max_length=100, unique=True, help_text="Nome do eixo (ex: Liderança, Estratégia)")
+    code = models.CharField(max_length=50, unique=True, help_text="Código único do eixo (ex: LEADERSHIP)")
+    order = models.IntegerField(unique=True, help_text="Ordem de exibição")
+    description = models.TextField(blank=True, help_text="Descrição do eixo de avaliação")
+    max_score_by_size = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Pontuação máxima por porte de empresa (ex: {'PE': 10.0, 'PME': 9.0, ...})"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = "Eixo de Avaliação"
+        verbose_name_plural = "Eixos de Avaliação"
+
+    def __str__(self):
+        return self.name
+
+    def calculate_max_scores(self):
+        """
+        Calcula a pontuação máxima possível para cada porte de empresa neste eixo.
+        Pontuação máxima = soma dos pesos de todas as questões do eixo (já que o máximo choice é 5, e (5/5) * peso = peso)
+        """
+        max_scores = {
+            'PE': 0.0,
+            'PME': 0.0,
+            'ME': 0.0,
+            'GE': 0.0,
+            'GGE': 0.0,
+        }
+
+        # Para cada questão deste eixo
+        for question in self.questions.all():
+            question_number = question.order
+
+            # Pular se a questão não tem peso definido
+            if question_number not in QUESTION_WEIGHTS:
+                continue
+
+            # Adicionar o peso de cada porte ao total
+            for size_code in max_scores.keys():
+                weight = QUESTION_WEIGHTS[question_number].get(size_code, 0)
+                max_scores[size_code] += weight
+
+        return max_scores
+
+    def update_max_scores(self):
+        """Calcula e salva as pontuações máximas no campo max_score_by_size"""
+        self.max_score_by_size = self.calculate_max_scores()
+        self.save()
+        return self.max_score_by_size
+
+
 class Question(models.Model):
     order = models.IntegerField(unique=True, help_text="Ordem da pergunta (1, 2, 3...)")
     label = models.TextField(help_text="Texto da pergunta")
     field_name = models.CharField(max_length=50, unique=True, help_text="Nome do campo (ex: question1)")
+    axis = models.ForeignKey(
+        EvaluationAxis,
+        on_delete=models.PROTECT,
+        related_name='questions',
+        null=True,
+        blank=True,
+        help_text="Eixo de avaliação ISO 56002"
+    )
     is_active = models.BooleanField(default=True, help_text="Pergunta ativa no formulário")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
