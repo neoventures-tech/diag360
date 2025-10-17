@@ -176,7 +176,7 @@ class PriorityAction(models.Model):
     @staticmethod
     def get_priority_action(total_score, company_size):
         if total_score is None or company_size is None:
-            return "Não foi possível determinar a ação prioritária."
+            return None
 
         # Busca no banco de dados primeiro
         level = MaturityLevel.objects.filter(
@@ -189,11 +189,99 @@ class PriorityAction(models.Model):
                 maturity_level=level,
                 company_size=company_size
             ).first()
+            return priority
 
-            if priority:
-                return priority.action
+        return None
 
-        return "Não foi possível determinar a ação prioritária."
+
+class SalesTrigger(models.Model):
+    maturity_level = models.ForeignKey(
+        MaturityLevel,
+        on_delete=models.CASCADE,
+        related_name='sales_triggers',
+        help_text="Nível de maturidade relacionado"
+    )
+    company_size = models.CharField(
+        max_length=10,
+        choices=COMPANY_SIZE_CHOICES,
+        help_text="Porte da empresa"
+    )
+    action = models.TextField(help_text="Gatilho de venda recomendado")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['maturity_level', 'company_size']
+        unique_together = [['maturity_level', 'company_size']]
+        verbose_name = "Gatilho de Venda"
+        verbose_name_plural = "Gatilhos de Venda"
+
+    def __str__(self):
+        return f"{self.maturity_level.name} - {self.company_size}: {self.action[:50]}..."
+
+    @staticmethod
+    def get_sales_trigger(total_score, company_size):
+        if total_score is None or company_size is None:
+            return None
+
+        level = MaturityLevel.objects.filter(
+            min_score__lte=total_score,
+            max_score__gte=total_score
+        ).first()
+
+        if level:
+            trigger = SalesTrigger.objects.filter(
+                maturity_level=level,
+                company_size=company_size
+            ).first()
+            return trigger
+
+        return None
+
+
+class InnovationLevelMaintenance(models.Model):
+    maturity_level = models.ForeignKey(
+        MaturityLevel,
+        on_delete=models.CASCADE,
+        related_name='maintenance_actions',
+        help_text="Nível de maturidade relacionado"
+    )
+    company_size = models.CharField(
+        max_length=10,
+        choices=COMPANY_SIZE_CHOICES,
+        help_text="Porte da empresa"
+    )
+    action = models.TextField(help_text="Ação de manutenção recomendada")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['maturity_level', 'company_size']
+        unique_together = [['maturity_level', 'company_size']]
+        verbose_name = "Manutenção do Nível de Inovação"
+        verbose_name_plural = "Manutenções do Nível de Inovação"
+
+    def __str__(self):
+        return f"{self.maturity_level.name} - {self.company_size}: {self.action[:50]}..."
+
+    @staticmethod
+    def get_maintenance_action(total_score, company_size):
+        if total_score is None or company_size is None:
+            return None
+
+        level = MaturityLevel.objects.filter(
+            min_score__lte=total_score,
+            max_score__gte=total_score
+        ).first()
+
+        if level:
+            maintenance = InnovationLevelMaintenance.objects.filter(
+                maturity_level=level,
+                company_size=company_size
+            ).first()
+            return maintenance
+
+        return None
 
 
 class EvaluationAxis(models.Model):
@@ -314,11 +402,6 @@ class InnovationEvaluation(models.Model):
     total_score = models.FloatField(default=0, help_text="Pontuação total calculada")
     score_by_dimension = models.JSONField(default=dict, blank=True, help_text="Pontuação por dimensão")
 
-    maturity_level = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text="Nível de maturidade (Ex: Nível 1: Inicial / Caótico)"
-    )
     maturity_level_fk = models.ForeignKey(
         MaturityLevel,
         on_delete=models.SET_NULL,
@@ -336,14 +419,42 @@ class InnovationEvaluation(models.Model):
         blank=True,
         help_text="Descrição do nível de maturidade"
     )
-    priority_action = models.TextField(
+    priority_action_fk = models.ForeignKey(
+        PriorityAction,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
+        related_name='evaluations',
         help_text="Ação prioritária recomendada"
+    )
+    sales_trigger = models.ForeignKey(
+        SalesTrigger,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='evaluations',
+        help_text="Gatilho de venda recomendado"
+    )
+    maintenance_action = models.ForeignKey(
+        InnovationLevelMaintenance,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='evaluations',
+        help_text="Ação de manutenção recomendada"
     )
     ai_analysis = models.TextField(
         blank=True,
         help_text="Análise gerada pela IA (Considerações Finais)"
     )
+
+    # Campos de Ranking
+    ranking_position = models.IntegerField(null=True, blank=True, help_text="Posição no ranking")
+    ranking_total = models.IntegerField(null=True, blank=True, help_text="Total de avaliações no ranking")
+    ranking_percentile = models.FloatField(null=True, blank=True, help_text="Percentil da pontuação")
+    ranking_better_than_percentage = models.FloatField(null=True, blank=True, help_text="% de empresas superadas")
+    ranking_average_score = models.FloatField(null=True, blank=True, help_text="Pontuação média do porte")
+    ranking_top_score = models.FloatField(null=True, blank=True, help_text="Maior pontuação do porte")
 
     # Metadados
     created_at = models.DateTimeField(auto_now_add=True)
@@ -359,16 +470,10 @@ class InnovationEvaluation(models.Model):
         company = self.company_name or "Sem nome"
         return f"{company} - {self.created_at.strftime('%d/%m/%Y %H:%M')}"
 
-    def get_ranking_stats(self):
+    def update_ranking_stats(self):
         """
-        Calcula estatísticas de ranking comparando com outras avaliações do mesmo porte.
-        Retorna:
-        - position: posição no ranking (1 = melhor)
-        - total: total de avaliações do mesmo porte
-        - percentile: percentil da pontuação
-        - better_than_percentage: % de empresas que essa avaliação superou
-        - average_score: pontuação média do porte
-        - top_score: maior pontuação do porte
+        Calcula e SALVA estatísticas de ranking comparando com outras avaliações do mesmo porte.
+        Retorna um dicionário com as estatísticas.
         """
         if not self.company_size:
             return None
@@ -377,13 +482,13 @@ class InnovationEvaluation(models.Model):
         same_size_evaluations = InnovationEvaluation.objects.filter(
             company_size=self.company_size
         ).exclude(
-            id=self.id  # Excluir a própria avaliação
+            id=self.id
         ).order_by('-total_score')
 
         total_count = same_size_evaluations.count()
 
         if total_count == 0:
-            return {
+            stats_dict = {
                 'position': 1,
                 'total': 1,
                 'percentile': 100,
@@ -392,42 +497,63 @@ class InnovationEvaluation(models.Model):
                 'top_score': self.total_score,
                 'is_only_one': True
             }
+        else:
+            # Contar quantas avaliações têm pontuação maior
+            better_count = same_size_evaluations.filter(total_score__gt=self.total_score).count()
+            position = better_count + 1
 
-        # Contar quantas avaliações têm pontuação maior
-        better_count = same_size_evaluations.filter(total_score__gt=self.total_score).count()
-        position = better_count + 1
+            # Calcular percentil
+            percentile = ((total_count - position + 1) / total_count) * 100
 
-        # Calcular percentil (quanto maior, melhor)
-        percentile = ((total_count - position + 1) / total_count) * 100
+            # Percentual de empresas superadas
+            worse_count = same_size_evaluations.filter(total_score__lt=self.total_score).count()
+            better_than_percentage = (worse_count / total_count) * 100
 
-        # Percentual de empresas que essa avaliação superou
-        worse_count = same_size_evaluations.filter(total_score__lt=self.total_score).count()
-        better_than_percentage = (worse_count / total_count) * 100
+            # Estatísticas agregadas
+            from django.db.models import Avg, Max
+            agg_stats = same_size_evaluations.aggregate(
+                avg_score=Avg('total_score'),
+                max_score=Max('total_score')
+            )
 
-        # Estatísticas agregadas
-        from django.db.models import Avg, Max
-        stats = same_size_evaluations.aggregate(
-            avg_score=Avg('total_score'),
-            max_score=Max('total_score')
-        )
+            top_score = max(agg_stats['max_score'] or 0, self.total_score)
 
-        # Considerar a própria avaliação no top_score
-        top_score = max(stats['max_score'] or 0, self.total_score)
+            stats_dict = {
+                'position': position,
+                'total': total_count + 1,
+                'percentile': round(percentile, 1),
+                'better_than_percentage': round(better_than_percentage, 1),
+                'average_score': round(agg_stats['avg_score'] or self.total_score, 2),
+                'top_score': round(top_score, 2),
+                'is_only_one': False
+            }
 
-        return {
-            'position': position,
-            'total': total_count + 1,  # +1 para incluir a própria avaliação
-            'percentile': round(percentile, 1),
-            'better_than_percentage': round(better_than_percentage, 1),
-            'average_score': round(stats['avg_score'] or self.total_score, 2),
-            'top_score': round(top_score, 2),
-            'is_only_one': False
-        }
+        # Atualiza os campos do modelo
+        self.ranking_position = stats_dict['position']
+        self.ranking_total = stats_dict['total']
+        self.ranking_percentile = stats_dict['percentile']
+        self.ranking_better_than_percentage = stats_dict['better_than_percentage']
+        self.ranking_average_score = stats_dict['average_score']
+        self.ranking_top_score = stats_dict['top_score']
+
+        # Salva os campos atualizados no banco de dados
+        self.save(update_fields=[
+            'ranking_position',
+            'ranking_total',
+            'ranking_percentile',
+            'ranking_better_than_percentage',
+            'ranking_average_score',
+            'ranking_top_score'
+        ])
+
+        return stats_dict
 
     @staticmethod
     def generate_full_report(total_score, company_size):
         level_info = MaturityLevel.calculate_maturity_level(total_score)
-        priority_action = PriorityAction.get_priority_action(total_score, company_size)
+        priority_action_obj = PriorityAction.get_priority_action(total_score, company_size)
+        sales_trigger_obj = SalesTrigger.get_sales_trigger(total_score, company_size)
+        maintenance_action_obj = InnovationLevelMaintenance.get_maintenance_action(total_score, company_size)
 
         if level_info is None:
             return {
@@ -435,6 +561,8 @@ class InnovationEvaluation(models.Model):
                 "pontuacao_total": total_score,
                 "porte_empresa": company_size,
             }
+
+        priority_action_text = priority_action_obj.action if priority_action_obj else "Não foi possível determinar a ação prioritária."
 
         print("\n" + "=" * 80)
         print("🏆 RELATÓRIO DE MATURIDADE DE INOVAÇÃO")
@@ -446,7 +574,7 @@ class InnovationEvaluation(models.Model):
         print(f"📝 Descrição: {level_info['descricao']}")
         print("=" * 80)
         print(f"✨ PRÓXIMA AÇÃO PRIORITÁRIA:")
-        print(f"   {priority_action}")
+        print(f"   {priority_action_text}")
         print("=" * 80 + "\n")
 
         full_report = {
@@ -457,7 +585,12 @@ class InnovationEvaluation(models.Model):
             "level_focus": level_info["foco"],
             "level_description": level_info["descricao"],
             "level_range": level_info["faixa"],
-            "priority_action": priority_action,
+            "priority_action_obj": priority_action_obj,
+            "priority_action": priority_action_text,
+            "sales_trigger_obj": sales_trigger_obj,
+            "maintenance_action_obj": maintenance_action_obj,
+            "sales_trigger": sales_trigger_obj.action if sales_trigger_obj else "Não foi possível determinar o gatilho de venda.",
+            "maintenance_action": maintenance_action_obj.action if maintenance_action_obj else "Não foi possível determinar a ação de manutenção.",
         }
 
         return full_report

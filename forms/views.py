@@ -288,11 +288,12 @@ class AssessmentWizard(SessionWizardView):
             phone=company_data['phone'],
             total_score=total_score,
             company_size=company_size_code,
-            maturity_level=report['level_name'],
             maturity_level_fk=maturity_level_obj,  # Adiciona o FK
             focus=report['level_focus'],
             description=report['level_description'],
-            priority_action=report['priority_action'],
+            priority_action_fk=report['priority_action_obj'],
+            sales_trigger=report['sales_trigger_obj'],
+            maintenance_action=report['maintenance_action_obj'],
         )
 
         # Salva cada resposta individualmente
@@ -313,6 +314,9 @@ class AssessmentWizard(SessionWizardView):
         # Cria as pontuações por eixo
         from .models import AxisScore
         AxisScore.create_axis_scores_for_evaluation(evaluation, answers_dict)
+
+        # Calcula e salva as estatísticas de ranking
+        evaluation.update_ranking_stats()
 
         # Gera análise da IA com os dados do relatório
         import json
@@ -438,8 +442,16 @@ def evaluation_result(request, evaluation_id):
             }
             break
 
-    # Calcular estatísticas de ranking
-    ranking_stats = evaluation.get_ranking_stats()
+    # Monta o dicionário de estatísticas de ranking a partir dos dados salvos
+    ranking_stats = {
+        'position': evaluation.ranking_position,
+        'total': evaluation.ranking_total,
+        'percentile': evaluation.ranking_percentile,
+        'better_than_percentage': evaluation.ranking_better_than_percentage,
+        'average_score': evaluation.ranking_average_score,
+        'top_score': evaluation.ranking_top_score,
+        'is_only_one': evaluation.ranking_total == 1
+    }
 
     # Buscar AxisScores para o radar de maturidade
     axis_scores = evaluation.axis_scores.all().order_by('axis__order')

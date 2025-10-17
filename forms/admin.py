@@ -219,14 +219,12 @@ class InnovationEvaluationAdmin(admin.ModelAdmin):
         'created_at',
         'view_result_button'
     ]
-    list_filter = ['company_size', 'created_at', 'sector', 'maturity_level']
-    search_fields = ['company_name', 'contact_email', 'maturity_level__name']
+    list_filter = ['company_size', 'created_at', 'sector', 'maturity_level_fk']
+    search_fields = ['company_name', 'contact_email', 'maturity_level_fk__name']
     readonly_fields = [
         'total_score',
-        'maturity_level',
         'maturity_focus',
         'maturity_description',
-        'priority_action',
         'ai_analysis',
         'created_at',
         'updated_at',
@@ -238,10 +236,10 @@ class InnovationEvaluationAdmin(admin.ModelAdmin):
             'fields': ('company_name', 'contact_email', 'phone', 'sector', 'company_size')
         }),
         ('Pontuação e Nível de Maturidade', {
-            'fields': ('total_score', 'maturity_level', 'maturity_focus', 'maturity_description')
+            'fields': ('total_score', 'maturity_level_fk', 'maturity_focus', 'maturity_description')
         }),
-        ('Ação Prioritária', {
-            'fields': ('priority_action',)
+        ('Ações Recomendadas', {
+            'fields': ('priority_action_fk', 'sales_trigger', 'maintenance_action')
         }),
         ('Análise da IA', {
             'fields': ('ai_analysis',)

@@ -715,8 +715,7 @@
         {% endif %}
 
 
-
-        <!-- Recomendações / Ação Prioritária -->
+            <!-- Recomendações -->
         <section class="report-section">
             <h3 class="section-title">
                 <i class="fas fa-chart-line" style="color: #f97316;"></i>
@@ -737,6 +736,34 @@
                     </div>
                 </div>
 
+
+
+                <!-- Próximos passos possíveis -->
+                {% if ai_section_3 %}
+                <div>
+                    <h4 style="color: #2c3e50; font-size: 1rem; font-weight: 600; margin: 0 0 12px 0;">
+                        Próximos passos possíveis
+                    </h4>
+                    <div style="color: #6b7280; line-height: 1.7; font-size: 0.95rem;">
+                        FALTA INFORMAÇÃO AQUI
+                    </div>
+                </div>
+                {% endif %}
+
+
+
+                {% load static %}
+                <div class="my-4">
+                    <img src="{% static 'images/solv.png' %}" alt="Solv" class="img-fluid w-100" style="border-radius: 8px;">
+                </div>
+
+                <div class="d-grid my-4">
+                    <a href="/" class="btn btn-primary w-100">
+                        <i class="fas fa-rocket me-2"></i>
+                        Conheça Mais
+                    </a>
+                </div>
+
                 <!-- Ganhos com a implementação -->
                 {% if ai_section_2 %}
                 <div style="margin-bottom: 20px;">
@@ -749,6 +776,34 @@
                 </div>
                 {% endif %}
 
+
+            </div>
+        </section>
+
+
+        <!-- Cuidado! Não deixe o nível de inovação cair -->
+        <section class="report-section">
+            <h3 class="section-title">
+                <i class="fas fa-chart-line" style="color: #f97316;"></i>
+                Cuidado! Não deixe o nível de inovação cair
+            </h3>
+            <div class="section-content">
+                <!-- Ação Prioritária -->
+{#                <div style="background: #f8f9fb; padding: 20px 25px; border-radius: 10px; margin-bottom: 20px; position: relative;">#}
+{#                    <div style="display: flex; align-items: flex-start; gap: 15px;">#}
+{#                        <div style="flex: 1;">#}
+{#                            <p style="color: #2c3e50; margin: 0; line-height: 1.7; font-size: 1rem; font-weight: 500;">#}
+{#                                {{ evaluation.priority_action }}#}
+{#                            </p>#}
+{#                        </div>#}
+{#                        <div style="position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: #10b981; border-radius: 6px; display: flex; align-items: center; justify-content: center;">#}
+{#                            <i class="fas fa-check" style="color: white; font-size: 1rem;"></i>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+
+
+
                 <!-- Alertas para manutenção -->
                 {% if ai_section_3 %}
                 <div>
@@ -757,6 +812,20 @@
                     </h4>
                     <div style="color: #6b7280; line-height: 1.7; font-size: 0.95rem;">
                         {{ ai_section_3 }}
+                    </div>
+                </div>
+                {% endif %}
+
+
+
+                <!-- Ganhos com a implementação -->
+                {% if ai_section_2 %}
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #2c3e50; font-size: 1rem; font-weight: 600; margin: 0 0 12px 0;">
+                        Próximos passos possíveis para manutenção do nível de inovação
+                    </h4>
+                    <div style="color: #6b7280; line-height: 1.7; font-size: 0.95rem;">
+                        FALTA INFORMAÇÃO AQUI
                     </div>
                 </div>
                 {% endif %}
@@ -787,7 +856,7 @@
 
             // Dados da avaliação
             const totalScore = {{ evaluation.total_score|unlocalize }};
-            const maturityLevel = "{{ evaluation.maturity_level|escapejs }}";
+            const maturityLevel = "{{ evaluation.maturity_level_fk.name|escapejs }}";
 
             console.log('Total Score:', totalScore);
             console.log('Maturity Level:', maturityLevel);
