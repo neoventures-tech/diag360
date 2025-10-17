@@ -518,7 +518,8 @@ class AxisScore(models.Model):
         self.calculate_percentage()
 
         # Calcula o benchmark (melhor valor entre todas as avaliações do mesmo eixo)
-        best = AxisScore.objects.filter(axis=self.axis).exclude(pk=self.pk).aggregate(
+        best = AxisScore.objects.filter(axis=self.axis,
+                                        evaluation__company_size=self.evaluation.company_size).exclude(pk=self.pk).aggregate(
             models.Max('percentage')
         )['percentage__max']
 
