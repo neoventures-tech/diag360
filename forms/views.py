@@ -441,6 +441,31 @@ def evaluation_result(request, evaluation_id):
     # Calcular estatísticas de ranking
     ranking_stats = evaluation.get_ranking_stats()
 
+    # Buscar AxisScores para o radar de maturidade
+    axis_scores = evaluation.axis_scores.all().order_by('axis__order')
+
+    # Preparar dados para o gráfico radar
+    radar_labels = []
+    radar_obtained = []
+    radar_benchmarks = []
+    radar_percentages = []
+
+    # Preparar dados para os cards
+    axis_cards_data = []
+
+    for axis_score in axis_scores:
+        radar_labels.append(axis_score.axis.name)
+        radar_obtained.append(float(axis_score.score_obtained))
+        radar_benchmarks.append(float(axis_score.max_score_possible))
+        radar_percentages.append(float(axis_score.percentage))
+
+        axis_cards_data.append({
+            'name': axis_score.axis.name,
+            'score': axis_score.score_obtained,
+            'benchmark': axis_score.benchmark,
+            'percentage': axis_score.percentage
+        })
+
     return render(request, "forms/evaluation_result.html", {
         "evaluation": evaluation,
         "ai_section_1": ai_section_1,
@@ -449,4 +474,10 @@ def evaluation_result(request, evaluation_id):
         "maturity_levels_json": json.dumps(levels_data),
         "ranking_stats": ranking_stats,
         "current_level": current_level,
+        "axis_scores": axis_scores,
+        "radar_labels": json.dumps(radar_labels),
+        "radar_obtained": json.dumps(radar_obtained),
+        "radar_benchmarks": json.dumps(radar_benchmarks),
+        "radar_percentages": json.dumps(radar_percentages),
+        "axis_cards_data": axis_cards_data,
     })

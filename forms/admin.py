@@ -116,8 +116,8 @@ class ChoiceAdmin(admin.ModelAdmin):
 class AxisScoreInline(admin.TabularInline):
     model = AxisScore
     extra = 0
-    fields = ['axis', 'score_obtained', 'max_score_possible', 'percentage']
-    readonly_fields = ['axis', 'score_obtained', 'max_score_possible', 'percentage']
+    fields = ['axis', 'score_obtained', 'max_score_possible', 'percentage', 'benchmark']
+    readonly_fields = ['axis', 'score_obtained', 'max_score_possible', 'percentage', 'benchmark']
     can_delete = False
 
     def has_add_permission(self, request, obj=None):
@@ -137,11 +137,61 @@ class EvaluationAnswerInline(admin.TabularInline):
 
 @admin.register(AxisScore)
 class AxisScoreAdmin(admin.ModelAdmin):
-    list_display = ['evaluation', 'axis', 'score_obtained', 'max_score_possible', 'percentage', 'created_at']
-    list_filter = ['axis', 'created_at']
+    list_display = [
+        'evaluation_id_short',
+        'company_name',
+        'company_size',
+        'axis',
+        'score_obtained',
+        'max_score_possible',
+        'percentage_display',
+        'benchmark_display',
+        'created_at'
+    ]
+    list_filter = ['axis', 'evaluation__company_size', 'created_at']
     search_fields = ['evaluation__company_name', 'evaluation__contact_email', 'axis__name']
-    readonly_fields = ['evaluation', 'axis', 'score_obtained', 'max_score_possible', 'percentage', 'created_at']
-    ordering = ['evaluation', 'axis__order']
+    readonly_fields = ['evaluation', 'axis', 'score_obtained', 'max_score_possible', 'percentage', 'benchmark', 'created_at', 'updated_at']
+    ordering = ['-created_at', 'evaluation', 'axis__order']
+
+    fieldsets = (
+        ('Avaliação', {
+            'fields': ('evaluation', 'axis')
+        }),
+        ('Pontuações', {
+            'fields': ('score_obtained', 'max_score_possible', 'percentage', 'benchmark')
+        }),
+        ('Metadados', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def evaluation_id_short(self, obj):
+        """Exibe versão curta do UUID da avaliação"""
+        return str(obj.evaluation.id)[:8]
+    evaluation_id_short.short_description = 'ID Aval.'
+
+    def company_name(self, obj):
+        """Exibe nome da empresa"""
+        return obj.evaluation.company_name or '-'
+    company_name.short_description = 'Empresa'
+
+    def company_size(self, obj):
+        """Exibe porte da empresa"""
+        return obj.evaluation.company_size or '-'
+    company_size.short_description = 'Porte'
+
+    def percentage_display(self, obj):
+        """Exibe percentual formatado"""
+        return f"{obj.percentage:.1f}%"
+    percentage_display.short_description = 'Percentual'
+    percentage_display.admin_order_field = 'percentage'
+
+    def benchmark_display(self, obj):
+        """Exibe benchmark formatado"""
+        return f"{obj.benchmark:.1f}%"
+    benchmark_display.short_description = 'Benchmark'
+    benchmark_display.admin_order_field = 'benchmark'
 
     def has_add_permission(self, request):
         return False

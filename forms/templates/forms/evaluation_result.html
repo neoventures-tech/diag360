@@ -557,10 +557,10 @@
                         </div>
                         <div>
                             <div style="font-weight: 600; color: #2c3e50; font-size: 1.05rem; margin-bottom: 3px;">
-                                {{ evaluation.maturity_level_fk.name }}
+                                Nível {{ evaluation.maturity_level_fk.level_number }}: {{ evaluation.maturity_level_fk.name }}
                             </div>
                             <div style="font-size: 0.9rem; color: #6b7280;">
-                                {{ evaluation.maturity_level_fk.min_score }}-{{ evaluation.maturity_level_fk.max_score }} pontos
+                                {{ evaluation.maturity_level_fk.min_score }} - {{ evaluation.maturity_level_fk.max_score }} pontos
                             </div>
                         </div>
                     </div>
@@ -586,6 +586,50 @@
                 </div>
             </div>
         </section>
+
+        <!-- Radar de Maturidade -->
+        {% if axis_scores %}
+        <section class="report-section">
+            <h3 class="section-title">
+                <i class="fas fa-chart-radar" style="color: #f97316;"></i>
+                Seu Radar de maturidade
+            </h3>
+            <div class="row align-items-start">
+                <!-- Gráfico Radar (Esquerda) -->
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div style="position: relative; height: 400px;">
+                        <canvas id="maturityRadarChart"></canvas>
+                    </div>
+                    <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                        <p style="margin: 0; font-size: 0.9rem; color: #6b7280; line-height: 1.6;">
+                            <strong style="color: #2c3e50;">Análise da nota:</strong> A IA inventa com base nos eixos uma análise
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Cards dos Eixos (Direita) -->
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        {% for card in axis_cards_data %}
+                        <div style="background: #f8f9fa; border-radius: 10px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid {% cycle '#ef4444' '#f59e0b' '#eab308' '#84cc16' '#10b981' '#3b82f6' %};">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: #2c3e50; font-size: 1rem; margin-bottom: 4px;">
+                                    {{ card.name }}
+                                </div>
+                                <div style="font-size: 0.85rem; color: #6b7280;">
+                                    benchmark: {{ card.benchmark|floatformat:1 }}%
+                                </div>
+                            </div>
+                            <div style="font-size: 2rem; font-weight: bold; color: {% cycle '#ef4444' '#f59e0b' '#eab308' '#84cc16' '#10b981' '#3b82f6' %};">
+                                {{ card.percentage|floatformat:1 }}%
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
 
         <!-- Ranking Comparativo -->
         {% if ranking_stats %}
@@ -918,6 +962,114 @@
             rankingContainer.innerHTML = rankingHTML;
 
             console.log('Gráficos renderizados com sucesso!');
+
+            // ===== GRÁFICO 2: Radar de Maturidade por Eixo =====
+            const radarCanvas = document.getElementById('maturityRadarChart');
+
+            if (radarCanvas) {
+                // Dados do radar vindos do backend
+                const radarLabels = {{ radar_labels|safe }};
+                const radarPercentages = {{ radar_percentages|safe }};
+
+                console.log('Radar Labels:', radarLabels);
+                console.log('Radar Percentages:', radarPercentages);
+
+                const radarCtx = radarCanvas.getContext('2d');
+
+                new Chart(radarCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: radarLabels,
+                        datasets: [
+                            {
+                                label: 'Percentual (%)',
+                                data: radarPercentages,
+                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                                borderColor: '#10b981',
+                                borderWidth: 2,
+                                pointBackgroundColor: '#10b981',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#10b981',
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    color: '#e5e7eb'
+                                },
+                                grid: {
+                                    color: '#e5e7eb'
+                                },
+                                pointLabels: {
+                                    color: '#374151',
+                                    font: {
+                                        size: 12,
+                                        weight: '600',
+                                        family: 'Inter'
+                                    }
+                                },
+                                ticks: {
+                                    color: '#9ca3af',
+                                    backdropColor: 'transparent',
+                                    font: {
+                                        size: 10
+                                    }
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 100,
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: {
+                                    color: '#374151',
+                                    font: {
+                                        size: 12,
+                                        family: 'Inter'
+                                    },
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 12,
+                                titleFont: {
+                                    size: 13,
+                                    family: 'Inter'
+                                },
+                                bodyFont: {
+                                    size: 12,
+                                    family: 'Inter'
+                                },
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += context.parsed.r.toFixed(1) + '%';
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                console.log('Radar chart renderizado com sucesso!');
+            }
 
         }); // Fim do DOMContentLoaded
 

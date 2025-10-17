@@ -45,6 +45,27 @@ python manage.py 4-calculate_axis_max_scores
 - Alterar os pesos das questões em `QUESTION_WEIGHTS`
 - Alterar a associação de questões aos eixos
 
+### 5. Popular Pontuações por Eixo (Avaliações Existentes)
+```bash
+python manage.py 5-populate_axis_scores_for_existing
+```
+**Função**: Popula os AxisScores para avaliações existentes que ainda não possuem pontuações por eixo.
+
+**Quando usar**:
+- Após adicionar o modelo AxisScore
+- Para avaliações antigas que não têm pontuações por eixo
+
+### 6. Recalcular Benchmarks dos Eixos
+```bash
+python manage.py 6-recalculate_axis_benchmarks
+```
+**Função**: Recalcula os benchmarks (melhor percentual histórico) de todos os AxisScores.
+
+**Quando usar**:
+- Após popular AxisScores para múltiplas avaliações
+- Periodicamente para atualizar os benchmarks históricos
+- Quando novos recordes são atingidos
+
 ## Execução Completa (Instalação Nova)
 
 Para executar todos os comandos em sequência:
@@ -56,6 +77,11 @@ python manage.py 3-populate_questions && \
 python manage.py 4-calculate_axis_max_scores
 ```
 
+**Nota**: Após as primeiras avaliações serem feitas, execute:
+```bash
+python manage.py 6-recalculate_axis_benchmarks
+```
+
 ## Atualização (Sistema Existente)
 
 Para atualizar um sistema que já possui dados:
@@ -63,7 +89,9 @@ Para atualizar um sistema que já possui dados:
 ```bash
 python manage.py 2-populate_axis && \
 python manage.py 3-update_questions_axis && \
-python manage.py 4-calculate_axis_max_scores
+python manage.py 4-calculate_axis_max_scores && \
+python manage.py 5-populate_axis_scores_for_existing && \
+python manage.py 6-recalculate_axis_benchmarks
 ```
 
 ## Observações

@@ -485,6 +485,10 @@ class AxisScore(models.Model):
         default=0,
         help_text="Pontuação máxima possível para este eixo (baseada no porte da empresa)"
     )
+    benchmark = models.FloatField(
+        default=0,
+        help_text="Melhor percentual histórico neste eixo (benchmark)"
+    )
     percentage = models.FloatField(
         default=0,
         help_text="Percentual de atingimento (score_obtained / max_score_possible * 100)"
@@ -512,6 +516,14 @@ class AxisScore(models.Model):
     def save(self, *args, **kwargs):
         """Calcula o percentual antes de salvar"""
         self.calculate_percentage()
+
+        # Calcula o benchmark (melhor valor entre todas as avaliações do mesmo eixo)
+        best = AxisScore.objects.filter(axis=self.axis).exclude(pk=self.pk).aggregate(
+            models.Max('percentage')
+        )['percentage__max']
+
+        self.benchmark = best if best is not None else self.percentage
+
         super().save(*args, **kwargs)
 
     @staticmethod
