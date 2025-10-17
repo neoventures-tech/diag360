@@ -137,9 +137,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# Django automatically collects static files from each app's static/ directory
+# No need for STATICFILES_DIRS since we're only using app-level static directories
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 
 # Media files configuration for Twilio
 MEDIA_URL = '/media/'
