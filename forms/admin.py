@@ -6,6 +6,7 @@ from forms.models import (
     PriorityAction,
     InnovationEvaluation,
     EvaluationAxis,
+    AxisScore,
     Question,
     Choice,
     EvaluationAnswer
@@ -112,6 +113,17 @@ class ChoiceAdmin(admin.ModelAdmin):
     text_preview.short_description = 'Texto da Opção'
 
 
+class AxisScoreInline(admin.TabularInline):
+    model = AxisScore
+    extra = 0
+    fields = ['axis', 'score_obtained', 'max_score_possible', 'percentage']
+    readonly_fields = ['axis', 'score_obtained', 'max_score_possible', 'percentage']
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
 class EvaluationAnswerInline(admin.TabularInline):
     model = EvaluationAnswer
     extra = 0
@@ -120,6 +132,18 @@ class EvaluationAnswerInline(admin.TabularInline):
     can_delete = False
 
     def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(AxisScore)
+class AxisScoreAdmin(admin.ModelAdmin):
+    list_display = ['evaluation', 'axis', 'score_obtained', 'max_score_possible', 'percentage', 'created_at']
+    list_filter = ['axis', 'created_at']
+    search_fields = ['evaluation__company_name', 'evaluation__contact_email', 'axis__name']
+    readonly_fields = ['evaluation', 'axis', 'score_obtained', 'max_score_possible', 'percentage', 'created_at']
+    ordering = ['evaluation', 'axis__order']
+
+    def has_add_permission(self, request):
         return False
 
 
@@ -158,7 +182,7 @@ class InnovationEvaluationAdmin(admin.ModelAdmin):
         'updated_at',
         'source_ip'
     ]
-    inlines = [EvaluationAnswerInline]
+    inlines = [AxisScoreInline, EvaluationAnswerInline]
     fieldsets = (
         ('Dados da Empresa', {
             'fields': ('company_name', 'contact_email', 'phone', 'sector', 'company_size')

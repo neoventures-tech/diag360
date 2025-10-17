@@ -463,6 +463,134 @@ class InnovationEvaluation(models.Model):
         return full_report
 
 
+class AxisScore(models.Model):
+    """Pontuação por eixo de avaliação"""
+    evaluation = models.ForeignKey(
+        'InnovationEvaluation',
+        on_delete=models.CASCADE,
+        related_name='axis_scores',
+        help_text="Avaliação relacionada"
+    )
+    axis = models.ForeignKey(
+        EvaluationAxis,
+        on_delete=models.PROTECT,
+        related_name='scores',
+        help_text="Eixo de avaliação"
+    )
+    score_obtained = models.FloatField(
+        default=0,
+        help_text="Pontuação obtida neste eixo"
+    )
+    max_score_possible = models.FloatField(
+        default=0,
+        help_text="Pontuação máxima possível para este eixo (baseada no porte da empresa)"
+    )
+    percentage = models.FloatField(
+        default=0,
+        help_text="Percentual de atingimento (score_obtained / max_score_possible * 100)"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['axis__order']
+        unique_together = [['evaluation', 'axis']]
+        verbose_name = "Pontuação por Eixo"
+        verbose_name_plural = "Pontuações por Eixo"
+
+    def __str__(self):
+        return f"{self.evaluation.id} - {self.axis.name}: {self.percentage:.1f}%"
+
+    def calculate_percentage(self):
+        """Calcula e atualiza o percentual de atingimento"""
+        if self.max_score_possible > 0:
+            self.percentage = (self.score_obtained / self.max_score_possible) * 100
+        else:
+            self.percentage = 0
+        return self.percentage
+
+    def save(self, *args, **kwargs):
+        """Calcula o percentual antes de salvar"""
+        self.calculate_percentage()
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def calculate_axis_scores(evaluation, answers):
+        """
+        Calcula as pontuações por eixo para uma avaliação.
+
+        Args:
+            evaluation: Instância de InnovationEvaluation
+            answers: Dict com respostas {question_number: choice_value}
+
+        Returns:
+            List de dicionários com os scores por eixo
+        """
+        if not evaluation.company_size:
+            return []
+
+        company_level = answers.get(1)
+        if not company_level:
+            return []
+
+        company_size_code = COMPANY_SIZE.get(company_level)
+        if not company_size_code:
+            return []
+
+        axis_scores = []
+
+        # Para cada eixo de avaliação
+        for axis in EvaluationAxis.objects.all():
+            score_obtained = 0.0
+            max_score = axis.max_score_by_size.get(company_size_code, 0)
+
+            # Somar pontuação de todas as questões deste eixo
+            for question in axis.questions.all():
+                question_number = question.order
+                selected_level = answers.get(question_number, 0)
+
+                if selected_level > 0 and question_number in QUESTION_WEIGHTS:
+                    weight = QUESTION_WEIGHTS[question_number].get(company_size_code, 0)
+                    # Fórmula: (nivel_escolhido / 5) × Peso
+                    score_obtained += (selected_level / 5.0) * weight
+
+            # Calcular percentual
+            percentage = (score_obtained / max_score * 100) if max_score > 0 else 0
+
+            axis_scores.append({
+                'axis': axis,
+                'score_obtained': round(score_obtained, 2),
+                'max_score_possible': round(max_score, 2),
+                'percentage': round(percentage, 2)
+            })
+
+        return axis_scores
+
+    @staticmethod
+    def create_axis_scores_for_evaluation(evaluation, answers):
+        """
+        Cria os registros de AxisScore para uma avaliação.
+
+        Args:
+            evaluation: Instância de InnovationEvaluation
+            answers: Dict com respostas {question_number: choice_value}
+        """
+        # Deletar scores anteriores se existirem
+        AxisScore.objects.filter(evaluation=evaluation).delete()
+
+        # Calcular e criar novos scores
+        axis_scores_data = AxisScore.calculate_axis_scores(evaluation, answers)
+
+        for score_data in axis_scores_data:
+            AxisScore.objects.create(
+                evaluation=evaluation,
+                axis=score_data['axis'],
+                score_obtained=score_data['score_obtained'],
+                max_score_possible=score_data['max_score_possible']
+            )
+
+        return AxisScore.objects.filter(evaluation=evaluation)
+
 
 class EvaluationAnswer(models.Model):
     evaluation = models.ForeignKey(

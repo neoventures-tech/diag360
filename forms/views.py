@@ -310,6 +310,10 @@ class AssessmentWizard(SessionWizardView):
                 choice=choice
             )
 
+        # Cria as pontuações por eixo
+        from .models import AxisScore
+        AxisScore.create_axis_scores_for_evaluation(evaluation, answers_dict)
+
         # Gera análise da IA com os dados do relatório
         import json
         assistant = Inova360AIAssistant()
