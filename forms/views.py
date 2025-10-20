@@ -368,6 +368,7 @@ def evaluation_result(request, evaluation_id):
     ai_section_1 = ""  # Sua pontuação indica que
     ai_section_2 = ""  # Ganhos com a implementação
     ai_section_3 = ""  # Alertas para manutenção
+    ai_section_4 = ""  # Analise da nota
 
     def markdown_to_html(text):
         """Converte markdown simples em HTML"""
@@ -416,7 +417,7 @@ def evaluation_result(request, evaluation_id):
     if evaluation.ai_analysis:
         # Dividir a análise em seções usando os títulos ### como delimitadores
         # O regex retorna: ['', 'TÍTULO 1', 'conteúdo 1', 'TÍTULO 2', 'conteúdo 2', ...]
-        sections = re.split(r'### \d+\.\s*(.+?)(?=\n)', evaluation.ai_analysis)
+        sections = re.split(r'#### \d+\.\s*(.+?)(?=\n)', evaluation.ai_analysis)
 
         # Processar pares de (título, conteúdo)
         for i in range(1, len(sections), 2):
@@ -431,6 +432,8 @@ def evaluation_result(request, evaluation_id):
                     ai_section_2 = mark_safe(markdown_to_html(content))
                 elif 'ALERTAS PARA MANUTENÇÃO' in title or 'ALERTAS' in title:
                     ai_section_3 = mark_safe(markdown_to_html(content))
+                elif 'ANÁLISE DA NOTA' in title or 'ALERTAS' in title:
+                    ai_section_4 = mark_safe(markdown_to_html(content))
 
     # Buscar todos os níveis de maturidade do banco de dados
     maturity_levels = MaturityLevel.objects.all().order_by('level_number')
@@ -497,6 +500,7 @@ def evaluation_result(request, evaluation_id):
         "ai_section_1": ai_section_1,
         "ai_section_2": ai_section_2,
         "ai_section_3": ai_section_3,
+        "ai_section_4": ai_section_4,
         "maturity_levels_json": json.dumps(levels_data),
         "ranking_stats": ranking_stats,
         "current_level": current_level,
