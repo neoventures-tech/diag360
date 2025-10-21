@@ -752,7 +752,7 @@
 
                 {% load static %}
                 <div class="my-4">
-                    {% if 'NEO' in evaluation.sales_trigger.action %}
+                    {% if 'NEO' in evaluation.sales_trigger.action or 'Neoventures' in evaluation.sales_trigger.action or 'Neo Ventures' in evaluation.sales_trigger.action %}
                         <img src="{% static 'forms/images/neo.png' %}" alt="NEO" class="img-fluid w-100" style="border-radius: 8px;">
                     {% elif 'SOLV' in evaluation.sales_trigger.action %}
                         <img src="{% static 'forms/images/solv.png' %}" alt="SOLV" class="img-fluid w-100" style="border-radius: 8px;">
