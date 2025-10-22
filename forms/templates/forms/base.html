@@ -217,7 +217,6 @@
         .form-body {
             padding: 25px 30px;
             position: relative;
-            display: flex;
             max-height: calc(100vh - 240px);
             {#overflow-y: auto;#}
         }
@@ -513,7 +512,7 @@
                 
                 <div class="form-container">
                     {% block header %}{% endblock %}
-                    <div class="form-body d-flex justify-content-center align-items-center">
+                    <div class="form-body">
                         {% block content %}{% endblock %}
                     </div>
                 </div>
