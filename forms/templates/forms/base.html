@@ -8,6 +8,32 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+         .circle {
+            width: 350px;
+            height: 350px;
+            background: #FFDAA6;
+            border-radius: 50%;
+
+            animation: pulse-circle 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-circle {
+            0%, 100% {
+                transform: translateX(-50%) scale(0.5);
+            }
+            50% {
+                transform: translateX(0%) scale(1.1);
+            }
+        }
+
+        @keyframes pulse-circle-2 {
+            0%, 100% {
+                transform: translateY(-50%) scale(0.5);
+            }
+            50% {
+                transform: translateY(0%) scale(1);
+            }
+        }
         :root {
             --primary-purple: #7634C6;
             --secondary-purple: #9D5FE6;
@@ -48,12 +74,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background:
-                radial-gradient(circle at 15% 25%, rgba(118, 52, 198, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 85% 75%, rgba(157, 95, 230, 0.1) 0%, transparent 50%),
-                linear-gradient(180deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            background: linear-gradient(252.65deg, #7735C7 4.31%, #090141 43.95%);
+
             z-index: -1;
         }
+
+
 
         /* Floating Particles */
         .floating-particles {
@@ -167,6 +193,7 @@
             100% { transform: translateX(100%); }
         }
 
+
         /* Main Container */
         .form-container {
             background: #1E1150;
@@ -178,12 +205,21 @@
             position: relative;
             z-index: 10;
         }
-
+#wizard-form{
+    width: 100%;
+}
+        .form{
+            {#background: red;#}
+            width: 100%;
+            overflow-y: scroll;
+            height: calc(100% - 60px) !important;
+        }
         .form-body {
             padding: 25px 30px;
             position: relative;
+            display: flex;
             max-height: calc(100vh - 240px);
-            overflow-y: auto;
+            {#overflow-y: auto;#}
         }
 
         /* Question Styling */
