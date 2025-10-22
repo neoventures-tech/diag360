@@ -247,7 +247,7 @@
             background: rgba(16, 5, 65, 0.58);
         {#backdrop-filter: blur(20px);#} padding: 80px 0;
             position: relative;
-
+            overflow: hidden;
 
             & .circle:nth-of-type(1) {
                 position: absolute;
@@ -255,8 +255,7 @@
                 z-index: 0;
                 filter: blur(12px);
                 top: 350px;
-                left: 0;
-                transform: translateX(-50%);
+                left: -175px;
 
             }
 
@@ -265,8 +264,7 @@
                 z-index: 0;
                 filter: blur(255px);
                 top: 350px;
-                right: 0;
-                transform: translateX(50%);
+                right: -175px;
             }
         }
 
@@ -342,14 +340,14 @@
             position: relative;
             padding: 80px 0;
             background: rgba(16, 5, 65, 0.58);
+            overflow: hidden;
 
             & .circle:nth-of-type(1) {
                 position: absolute;
                 z-index: 0;
                 filter: blur(200px);
                 top: 150px;
-                left: 0;
-                transform: translateX(-50%);
+                left: -175px;
             }
 
             & .circle:nth-of-type(2) {
@@ -357,8 +355,7 @@
                 z-index: 0;
                 filter: blur(255px);
                 top: 350px;
-                right: 0;
-                transform: translateX(50%);
+                right: -175px;
             }
         }
 
@@ -421,7 +418,7 @@
             text-align: center;
             background: rgba(16, 5, 65, 0.58);
             position: relative;
-        {#overflow: hidden;#}
+            overflow: hidden;
 
             & .circle:nth-of-type(1) {
                 position: absolute;
@@ -429,9 +426,8 @@
                 z-index: 0;
                 filter: blur(50px);
                 top: -15px;
-                left: 90%;
+                right: -175px;
                 animation-name: pulse-circle-2;
-            {#transform: translateX(-50%);#}
             }
         }
 
@@ -483,6 +479,17 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            /* Container overflow fix for mobile */
+            html, body {
+                max-width: 100vw;
+                position: relative;
+            }
+
+            .container, .row {
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
             .circle {
                 display: none;
             }
