@@ -9,18 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-orange: #FF4500;
-            --secondary-orange: #FF6A33;
-            --accent-orange: #FF7A00;
-            --dark-bg: #0F0F23;
-            --card-bg: #1A1A2E;
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 69, 0, 0.2);
-            --text-light: #E5E5E5;
+            --primary-purple: #7634C6;
+            --secondary-purple: #9D5FE6;
+            --accent-purple: #B088F9;
+            --dark-bg: #1A0B47;
+            --darker-bg: #140842;
+            --card-bg: #1E1150;
+            --glass-bg: rgba(30, 17, 80, 0.9);
+            --glass-border: rgba(118, 52, 198, 0.3);
+            --text-light: #FFFFFF;
             --text-gray: #A0A0A0;
-            --gradient-1: linear-gradient(135deg, #FF4500 0%, #FF6A33 50%, #FF7A00 100%);
-            --gradient-2: linear-gradient(145deg, rgba(255,69,0,0.1) 0%, rgba(255,106,51,0.05) 100%);
-            --neon-glow: 0 0 20px rgba(255, 69, 0, 0.3);
+            --gradient-1: linear-gradient(135deg, #7634C6 0%, #9D5FE6 50%, #B088F9 100%);
+            --gradient-2: linear-gradient(145deg, rgba(118, 52, 198, 0.1) 0%, rgba(157, 95, 230, 0.05) 100%);
+            --neon-glow: 0 0 20px rgba(118, 52, 198, 0.4);
             --success-color: #10B981;
             --warning-color: #F59E0B;
         }
@@ -47,10 +48,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
-                radial-gradient(circle at 15% 25%, rgba(255,69,0,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 85% 75%, rgba(255,106,51,0.08) 0%, transparent 50%),
-                linear-gradient(180deg, var(--dark-bg) 0%, #16213E 100%);
+            background:
+                radial-gradient(circle at 15% 25%, rgba(118, 52, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(157, 95, 230, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
             z-index: -1;
         }
 
@@ -69,7 +70,7 @@
             position: absolute;
             width: 4px;
             height: 4px;
-            background: var(--primary-orange);
+            background: var(--primary-purple);
             border-radius: 50%;
             opacity: 0.3;
             animation: float-particle 8s linear infinite;
@@ -94,11 +95,11 @@
 
         /* Header with Glassmorphism */
         .form-header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 0 0 24px 24px;
-            padding: 20px 30px;
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
+            border-radius: 0;
+            padding: 25px 30px 20px;
             position: relative;
             overflow: hidden;
         }
@@ -110,43 +111,44 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--gradient-2);
+            background: transparent;
             z-index: -1;
         }
 
         .form-header h4 {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 0.9rem;
+            font-weight: 600;
             margin-bottom: 0;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #FFFFFF;
+        }
+
+        .form-header h4 i {
+            color: #B088F9;
         }
 
         .form-header small {
-            color: var(--text-gray);
+            color: #FFFFFF;
             font-size: 0.9rem;
             font-weight: 500;
         }
 
         /* Progress Bar Neo Design */
         .progress {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 12px;
-            height: 10px;
+            height: 8px;
             margin-top: 16px;
-            border: 1px solid rgba(255, 69, 0, 0.2);
+            border: none;
             overflow: hidden;
         }
 
         .progress-bar {
             background: var(--gradient-1);
             border-radius: 12px;
-            height: 10px;
+            height: 8px;
             position: relative;
             overflow: hidden;
-            box-shadow: var(--neon-glow);
+            box-shadow: none;
         }
 
         .progress-bar::before {
@@ -167,11 +169,11 @@
 
         /* Main Container */
         .form-container {
-            background: var(--glass-bg);
+            background: #1E1150;
             backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(118, 52, 198, 0.2);
             border-radius: 24px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             overflow: hidden;
             position: relative;
             z-index: 10;
@@ -186,30 +188,18 @@
 
         /* Question Styling */
         .question-label {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            color: var(--text-light);
-            margin-bottom: 20px;
-            line-height: 1.5;
-            padding: 18px 20px;
-            {#background: var(--glass-bg);#}
-            {#backdrop-filter: blur(10px);#}
-            {#border: 1px solid rgba(255, 69, 0, 0.15);#}
-            {#border-left: 4px solid var(--primary-orange);#}
-            {#border-radius: 12px;#}
+            color: #FFFFFF;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            padding: 0;
             position: relative;
             overflow: hidden;
         }
 
         .question-label::before {
-            content: '';
-            position: absolute;
-            {#top: 0;#}
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--gradient-2);
-            z-index: -1;
+            display: none;
         }
 
         .question-options {
@@ -229,41 +219,33 @@
         .question-options li {
             display: flex !important;
             align-items: center !important;
-            gap: 12px !important;
-            padding: 14px 18px !important;
+            gap: 14px !important;
+            padding: 16px 20px !important;
             background: #D9D9D9 !important;
-            backdrop-filter: blur(15px) !important;
-            border: 2px solid rgba(255, 69, 0, 0.15) !important;
+            backdrop-filter: none !important;
+            border: none !important;
             border-radius: 12px !important;
             transition: all 0.3s ease !important;
             cursor: pointer !important;
             position: relative !important;
             overflow: hidden !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+            box-shadow: none !important;
         }
 
         /* Shine effect */
         .question-options li::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.6s ease;
+            display: none;
         }
 
 
         /* Custom radio button */
         .question-options input[type="radio"] {
-            {#background: #5e5a5a!important;;#}
-            width: 24px !important;
-            height: 24px !important;
+            width: 20px !important;
+            height: 20px !important;
             border-radius: 50% !important;
-            border: 2px solid #5e5a5a !important;
-            {#background: var(--glass-bg) !important;#}
-            backdrop-filter: blur(10px) !important;
+            border: 2px solid #5E5A5A !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
             margin: 0 !important;
             cursor: pointer !important;
             flex-shrink: 0 !important;
@@ -278,9 +260,9 @@
         }
 
         .question-options input[type="radio"]:checked {
-            border-color: var(--primary-orange);
-            background: var(--gradient-1);
-            box-shadow: 0 0 12px rgba(255, 69, 0, 0.4);
+            border-color: transparent;
+            background: var(--gradient-1) !important;
+            box-shadow: none;
         }
 
         .question-options input[type="radio"]:checked::after {
@@ -288,12 +270,12 @@
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             color: white;
-            font-size: 12px;
+            font-size: 10px;
             position: absolute;
         }
 
         .question-options label {
-            color: #000000D9;
+            color: #000000;
             font-size: 0.95rem;
             font-weight: 500;
             cursor: pointer;
@@ -303,8 +285,8 @@
         }
 
         .question-options li:has(input:checked) label {
-            color: var(--text-gray);
-            font-weight: 600;
+            color: #000000;
+            font-weight: 500;
         }
 
         /* Buttons Neo Design */
@@ -312,12 +294,12 @@
             background: var(--gradient-1);
             border: none;
             border-radius: 50px;
-            padding: 12px 28px;
+            padding: 14px 32px;
             font-weight: 600;
             font-size: 1rem;
             color: white;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(118, 52, 198, 0.4);
             position: relative;
             overflow: hidden;
         }
@@ -338,35 +320,33 @@
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--neon-glow), 0 15px 40px rgba(255, 69, 0, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(118, 52, 198, 0.5);
             color: white;
         }
 
         .btn-secondary {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
             border-radius: 50px;
-            padding: 12px 28px;
+            padding: 14px 32px;
             font-weight: 600;
-            color: var(--text-light) !important;
+            color: #FFFFFF !important;
             transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
-            border-color: var(--primary-orange);
-            color: var(--primary-orange) !important;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 69, 0, 0.2);
+            color: #B088F9 !important;
+            transform: translateX(-3px);
         }
 
         /* Back Button */
         .btn-back-home {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 69, 0, 0.3);
-            color: var(--primary-orange);
+            border: 2px solid rgba(118, 52, 198, 0.3);
+            color: var(--primary-purple);
             border-radius: 50px;
             padding: 12px 24px;
             font-weight: 600;
@@ -378,7 +358,7 @@
         }
 
         .btn-back-home:hover {
-            background: var(--primary-orange);
+            background: var(--primary-purple);
             color: white;
             transform: translateY(-2px);
             box-shadow: var(--neon-glow);
@@ -395,7 +375,7 @@
 
         /* Loading Spinner */
         .spinner-border {
-            color: var(--primary-orange);
+            color: var(--primary-purple);
         }
 
         /* Responsive */
@@ -435,7 +415,7 @@
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-orange);
+            background: var(--primary-purple);
         }
 
         /* Alinhar input + texto na horizontal */

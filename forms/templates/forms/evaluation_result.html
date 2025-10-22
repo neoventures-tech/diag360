@@ -1,4 +1,5 @@
 {% load l10n %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -11,8 +12,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         :root {
-            --primary-orange: #FF6B35;
-            --dark-bg: #0F0F23;
+            --primary-purple: #7634C6;
+            --secondary-purple: #9D5FE6;
+            --dark-bg: #2D1B69;
+            --darker-bg: #1E1150;
             --text-dark: #2c3e50;
         }
 
@@ -40,9 +43,9 @@
             width: 100%;
             height: 100%;
             background:
-                radial-gradient(circle at 15% 25%, rgba(255,69,0,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 85% 75%, rgba(255,106,51,0.08) 0%, transparent 50%),
-                linear-gradient(180deg, var(--dark-bg) 0%, #16213E 100%);
+                radial-gradient(circle at 15% 25%, rgba(118, 52, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(157, 95, 230, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
             z-index: -1;
         }
 
@@ -54,15 +57,29 @@
         /* Success Icon */
         .success-header {
             text-align: center;
-            margin-bottom: 40px;
-            color: white;
+            margin-bottom: 20px;
         }
 
-        .success-icon {
-            font-size: 4rem;
-            color: #10B981;
-            margin-bottom: 20px;
-            animation: scaleIn 0.5s ease-out;
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #10B981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .success-badge i {
+            font-size: 1rem;
+        }
+
+        .success-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 10px;
         }
 
         @keyframes scaleIn {
@@ -76,46 +93,40 @@
             }
         }
 
-        .success-header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .success-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
         /* Report Title */
         .report-title-section {
             background: white;
             border-radius: 15px;
-            padding: 30px;
+            padding: 20px 25px;
             margin-bottom: 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: left;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         .report-title-section h2 {
-            color: var(--text-dark);
-            font-weight: 700;
-            font-size: 1.75rem;
+            color: #5C01D3;
+            font-weight: 600;
+            font-size: 2rem;
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
         }
 
         .report-title-section i {
-            color: var(--primary-orange);
+            color: #7634C6;
+            font-size: 1.1rem;
         }
 
         /* Report Sections */
         .report-section {
             background: white;
             border-radius: 15px;
-            padding: 30px;
+            padding: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-left: 5px solid var(--primary-orange);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: none;
             animation: slideUp 0.5s ease-out;
         }
 
@@ -132,19 +143,23 @@
 
         .section-title {
             color: var(--text-dark);
-            font-weight: 700;
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(255, 107, 53, 0.2);
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            padding-bottom: 0;
+            border-bottom: none;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .section-title i {
-            color: var(--primary-orange);
+            color: var(--text-dark);
+            font-size: 1rem;
         }
+
+        /* Seção com fundo verde */
+
 
         .section-content p {
             line-height: 1.9;
@@ -167,7 +182,7 @@
         /* AI Analysis Box */
         .ai-analysis-box {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-left: 5px solid var(--primary-orange);
+            border-left: 5px solid var(--primary-purple);
             padding: 30px;
             border-radius: 12px;
             line-height: 1.9;
@@ -177,13 +192,13 @@
 
         /* Markdown Content Styling */
         .markdown-content h3 {
-            color: var(--primary-orange);
+            color: var(--primary-purple);
             font-size: 1.35rem;
             font-weight: 700;
             margin-top: 25px;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 2px solid rgba(255, 107, 53, 0.2);
+            border-bottom: 2px solid rgba(118, 52, 198, 0.2);
         }
 
         .markdown-content h3:first-child {
@@ -214,7 +229,7 @@
         }
 
         .markdown-content li strong {
-            color: var(--primary-orange);
+            color: var(--primary-purple);
         }
 
         /* Action Buttons */
@@ -234,32 +249,32 @@
         }
 
         .btn-primary {
-            background: var(--primary-orange);
+            background: var(--primary-purple);
             border: none;
-            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+            box-shadow: 0 8px 20px rgba(118, 52, 198, 0.3);
         }
 
         .btn-primary:hover {
-            background: #ff5722;
+            background: var(--secondary-purple);
             transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(255, 107, 53, 0.4);
+            box-shadow: 0 12px 30px rgba(118, 52, 198, 0.4);
         }
 
         .btn-secondary {
             background: white;
-            border: 2px solid var(--primary-orange);
-            color: var(--primary-orange);
+            border: 2px solid var(--primary-purple);
+            color: var(--primary-purple);
         }
 
         .btn-secondary:hover {
-            background: var(--primary-orange);
+            background: var(--primary-purple);
             color: white;
             transform: translateY(-3px);
         }
 
         /* Highlight Colors */
         .text-primary {
-            color: var(--primary-orange) !important;
+            color: var(--primary-purple) !important;
             font-weight: 700;
         }
 
@@ -302,27 +317,20 @@
             }
 
             .success-header {
-                background: white;
-                color: #2c3e50 !important;
                 page-break-after: avoid;
-                margin-bottom: 20px;
-            }
-
-            .success-header .success-icon {
-                color: #10B981 !important;
-                font-size: 3rem;
                 margin-bottom: 15px;
             }
 
-            .success-header h1 {
-                color: #2c3e50 !important;
-                font-size: 1.5rem;
-                margin-bottom: 5px;
+            .success-badge {
+                background: #10B981 !important;
+                color: white !important;
+                display: inline-flex;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
-            .success-header p {
-                color: #2c3e50 !important;
-                font-size: 1rem;
+            .success-subtitle {
+                color: rgba(0, 0, 0, 0.5) !important;
             }
 
             .action-buttons {
@@ -331,7 +339,7 @@
 
             .report-title-section {
                 background: white !important;
-                border: 2px solid var(--primary-orange);
+                border: 2px solid var(--primary-purple);
                 page-break-after: avoid;
                 padding: 20px;
                 margin-bottom: 15px;
@@ -339,6 +347,11 @@
 
             .report-title-section h2 {
                 font-size: 1.4rem;
+                color: #7634C6 !important;
+            }
+
+            .report-title-section i {
+                color: #7634C6 !important;
             }
 
             .report-section {
@@ -350,6 +363,12 @@
                 padding: 20px;
             }
 
+            .report-section.green-bg {
+                background: #E8F5E9 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
             /* Primeira seção com gráficos - manter junta */
             .report-section:first-of-type {
                 page-break-after: auto;
@@ -357,14 +376,14 @@
 
             .section-title {
                 color: var(--text-dark) !important;
-                border-bottom-color: rgba(255, 107, 53, 0.2) !important;
+                border-bottom-color: rgba(118, 52, 198, 0.2) !important;
                 font-size: 1.1rem;
                 margin-bottom: 15px;
                 padding-bottom: 10px;
             }
 
             .section-title i {
-                color: var(--primary-orange) !important;
+                color: var(--primary-purple) !important;
             }
 
             .section-content {
@@ -426,7 +445,7 @@
             }
 
             .text-primary {
-                color: var(--primary-orange) !important;
+                color: var(--primary-purple) !important;
             }
 
             .text-warning {
@@ -449,11 +468,11 @@
         @keyframes pulse {
             0%, 100% {
                 transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4);
+                box-shadow: 0 0 0 0 rgba(118, 52, 198, 0.4);
             }
             50% {
                 transform: scale(1.05);
-                box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+                box-shadow: 0 0 0 10px rgba(118, 52, 198, 0);
             }
         }
 
@@ -502,18 +521,18 @@
     <div class="result-container">
         <!-- Success Header -->
         <div class="success-header">
-            <div class="success-icon">
+            <div class="success-badge">
                 <i class="fas fa-check-circle"></i>
+                Parabéns
             </div>
-            <h1>Parabéns!</h1>
-            <p>Sua avaliação foi concluída com sucesso</p>
+            <p class="success-subtitle">Seu parecer de inovação está abaixo</p>
         </div>
 
         <!-- Report Title -->
         <div class="report-title-section">
             <h2>
-                <i class="fas fa-chart-line me-2"></i>
-                Relatório de Avaliação de Inovação
+                <img src="{% static 'forms/images/icon-solv-2.png' %}" alt="SOLV" style="width: 24px; height: 24px;">
+                Relatório de avaliação de inovação
             </h2>
         </div>
 
@@ -543,9 +562,9 @@
         </section>
 
         <!-- Avaliação Diagnóstica -->
-        <section class="report-section">
+        <section class="report-section green-bg">
             <h3 class="section-title">
-                <i class="fas fa-flag" style="color: #f97316;"></i>
+                <i class="fas fa-flag"></i>
                 Sobre Seu nível de maturidade
             </h3>
             <div class="section-content">
@@ -591,7 +610,7 @@
         {% if axis_scores %}
         <section class="report-section">
             <h3 class="section-title">
-                <i class="fas fa-chart-radar" style="color: #f97316;"></i>
+                <i class="fas fa-chart-line"></i>
                 Seu Radar de maturidade
             </h3>
             <div class="row align-items-start">
@@ -600,11 +619,7 @@
                     <div style="position: relative; height: 400px;">
                         <canvas id="maturityRadarChart"></canvas>
                     </div>
-                    <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                        <p style="margin: 0; font-size: 0.9rem; color: #6b7280; line-height: 1.6;">
-                            <strong style="color: #2c3e50;">Análise da nota:</strong> {{ ai_section_4 }}
-                        </p>
-                    </div>
+
                 </div>
 
                 <!-- Cards dos Eixos (Direita) -->
@@ -628,6 +643,12 @@
                     </div>
                 </div>
             </div>
+
+        <div style="margin-top: 15px; padding: 15px; background: #F0F5FF; border-radius: 8px;">
+                        <p style="margin: 0; font-size: 0.9rem; margin: 0 0 8px 0; color: #6b7280; line-height: 1.6;">
+                            <strong style="color: #2c3e50;">Análise da nota:</strong> {{ ai_section_4 }}
+                        </p>
+                    </div>
         </section>
         {% endif %}
 
@@ -650,12 +671,12 @@
                 <!-- Cards de métricas -->
                 <div class="row mb-4 g-3">
                     <div class="col-md-4">
-                        <div style="background: #fffbf0; padding: 20px; border-radius: 10px; text-align: center; height: 100%;">
-                            <i class="fas fa-medal" style="color: #f59e0b; font-size: 2rem; margin-bottom: 10px;"></i>
+                        <div style="background: linear-gradient(135deg, #E8D4FF 0%, #F0E4FF 100%); padding: 20px; border-radius: 10px; text-align: center; height: 100%;">
+                            <i class="fas fa-medal" style="color: #7634C6; font-size: 2rem; margin-bottom: 10px;"></i>
                             <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 5px;">
                                 Você é a empresa
                             </div>
-                            <div style="font-size: 2.5rem; font-weight: bold; color: #f59e0b; line-height: 1;">
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #7634C6; line-height: 1;">
                                 {{ ranking_stats.position }}
                             </div>
                             <div style="color: #9ca3af; font-size: 0.8rem; margin-top: 5px;">
@@ -664,16 +685,16 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div style="background: #fff8f0; padding: 20px; border-radius: 10px; text-align: center; height: 100%;">
-                            <i class="fas fa-chart-bar" style="color: #f97316; font-size: 2rem; margin-bottom: 10px;"></i>
-                            <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 5px;">
+                        <div style="background: linear-gradient(135deg, #F0E4FF 0%, #E8D4FF 100%); padding: 20px; border-radius: 10px; text-align: center; height: 100%;">
+                            <i class="fas fa-chart-bar" style="color: #7634C6; font-size: 2rem; margin-bottom: 10px;"></i>
+                            <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 10px;">
                                 Performance relativa
                             </div>
                             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin: 10px 0;">
-                                <span style="background: #f97316; color: white; padding: 4px 12px; border-radius: 5px; font-size: 0.9rem; font-weight: 600;">
+                                <span style="background: linear-gradient(135deg, #D946EF 0%, #A855F7 100%); color: white; padding: 6px 14px; border-radius: 6px; font-size: 0.9rem; font-weight: 600;">
                                     Você {{ evaluation.total_score }}
                                 </span>
-                                <span style="background: #e5e7eb; color: #6b7280; padding: 4px 12px; border-radius: 5px; font-size: 0.9rem; font-weight: 600;">
+                                <span style="background: #E5E7EB; color: #6b7280; padding: 6px 14px; border-radius: 6px; font-size: 0.9rem; font-weight: 600;">
                                     Média {{ ranking_stats.average_score }}
                                 </span>
                             </div>
@@ -683,12 +704,12 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div style="background: #f0fdf4; padding: 20px; border-radius: 10px; text-align: center; height: 100%;">
-                            <i class="fas fa-smile" style="color: #10b981; font-size: 2rem; margin-bottom: 10px;"></i>
+                        <div style="background: linear-gradient(135deg, #E8D4FF 0%, #F0E4FF 100%); padding: 20px; border-radius: 10px; text-align: center; height: 100%;">
+                            <i class="fas fa-bullseye" style="color: #7634C6; font-size: 2rem; margin-bottom: 10px;"></i>
                             <div style="color: #6b7280; font-size: 0.85rem; margin-bottom: 5px;">
                                 Desempenho relativo
                             </div>
-                            <div style="font-size: 2.5rem; font-weight: bold; color: #10b981; line-height: 1;">
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #7634C6; line-height: 1;">
                                 {{ ranking_stats.better_than_percentage }}%
                             </div>
                             <div style="color: #9ca3af; font-size: 0.8rem; margin-top: 5px;">
@@ -700,7 +721,7 @@
 
                 <!-- Texto explicativo -->
                 {% if ai_section_1 %}
-                <div style="margin-top: 20px;">
+                <div style="background: #F0F5FF; padding: 18px 20px; border-radius: 10px; margin-top: 20px;">
                     <p style="color: var(--text-dark); margin: 0 0 8px 0; line-height: 1.6; font-size: 0.95rem; font-weight: 600;">
                         Sua pontuação indica que:
                     </p>
@@ -718,7 +739,7 @@
             <!-- Recomendações -->
         <section class="report-section">
             <h3 class="section-title">
-                <i class="fas fa-chart-line" style="color: #f97316;"></i>
+                <i class="fas fa-lightbulb"></i>
                 Recomendações
             </h3>
             <div class="section-content">
@@ -730,9 +751,9 @@
                                 {{ evaluation.priority_action_fk.action }}
                             </p>
                         </div>
-                        <div style="position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-check" style="color: #3b82f6; font-size: 1.5rem;"></i>
-                        </div>
+{#                        <div style="position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">#}
+{#                            <i class="fas fa-check" style="color: #3b82f6; font-size: 1.5rem;"></i>#}
+{#                        </div>#}
                     </div>
                 </div>
 
@@ -750,7 +771,7 @@
 
 
 
-                {% load static %}
+
                 <div class="my-4">
                     {% if 'NEO' in evaluation.sales_trigger.action or 'Neoventures' in evaluation.sales_trigger.action or 'Neo Ventures' in evaluation.sales_trigger.action %}
                         <img src="{% static 'forms/images/neo.png' %}" alt="NEO" class="img-fluid w-100" style="border-radius: 8px;">
@@ -794,7 +815,7 @@
         <!-- Cuidado! Não deixe o nível de inovação cair -->
         <section class="report-section">
             <h3 class="section-title">
-                <i class="fas fa-chart-line" style="color: #f97316;"></i>
+                <i class="fas fa-exclamation-triangle"></i>
                 Cuidado! Não deixe o nível de inovação cair
             </h3>
             <div class="section-content">
@@ -815,7 +836,8 @@
 
                 <!-- Alertas para manutenção -->
                 {% if ai_section_3 %}
-                <div>
+                <div style="background: #F0F5FF; padding: 20px 25px; border-radius: 10px; margin-bottom: 20px; ">
+
                     <h4 style="color: #2c3e50; font-size: 1rem; font-weight: 600; margin: 0 0 12px 0;">
                         Alertas para manutenção do nível de inovação
                     </h4>
@@ -826,7 +848,7 @@
                 {% endif %}
 
                 <!-- Ganhos com a implementação -->
-                <div style="background: #F0F5FF; padding: 20px 25px; border-radius: 10px; margin-bottom: 20px; ">
+                <div>
                     <h4 style="color: #2c3e50; font-size: 1rem; font-weight: 600; margin: 0 0 12px 0;">
                         Próximos passos possíveis para manutenção do nível de inovação
                     </h4>

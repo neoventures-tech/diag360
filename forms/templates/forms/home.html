@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -6,20 +7,21 @@
     <title>SOLV360° | Diagnóstico de Inovação | Transforme Sua Empresa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-orange: #FF6B35;
-            --secondary-orange: #FF8C42;
-            --accent-orange: #FFA500;
-            --dark-bg: #1a1d2e;
-            --card-bg: #252840;
+            --primary-purple: #7634C6;
+            --secondary-purple: #9D5FE6;
+            --accent-purple: #B088F9;
+            --dark-bg: #140742;
+            --darker-bg: #100541;
+            --card-bg: #1A0F3E;
             --glass-bg: rgba(255, 255, 255, 0.05);
             --text-light: #FFFFFF;
             --text-gray: #B8C1EC;
-            --gradient-1: linear-gradient(135deg, #FFBB01 0%, #FF4500 100%);
-            --gradient-2: linear-gradient(145deg, rgba(255,107,53,0.1) 0%, rgba(255,140,66,0.05) 100%);
-            --neon-glow: 0 0 30px rgba(255, 107, 53, 0.4);
+            --gradient-1: linear-gradient(135deg, #7634C6 0%, #9D5FE6 50%, #B088F9 100%);
+            --gradient-2: linear-gradient(145deg, rgba(118, 52, 198, 0.1) 0%, rgba(157, 95, 230, 0.05) 100%);
+            --neon-glow: 0 0 30px rgba(118, 52, 198, 0.4);
         }
 
         * {
@@ -37,23 +39,24 @@
 
         /* Glassmorphism Navigation */
         .navbar {
-            position: fixed;
+            position: absolute;
             top: 0;
             width: 100%;
-            background: rgba(15, 15, 35, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 69, 0, 0.1);
+            background: transparent;
+            backdrop-filter: none;
+            border-bottom: none;
             z-index: 1000;
             padding: 1rem 0;
         }
 
         .navbar-brand {
-            font-weight: 800;
-            font-size: 1.5rem;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            height: 20px;
+            width: auto;
         }
 
         /* Hero Section with Floating Elements */
@@ -61,10 +64,10 @@
             min-height: 100vh;
             position: relative;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             overflow: hidden;
-            padding-top: 120px;
-            padding-bottom: 80px;
+            padding-top: 0;
+            padding-bottom: 60px;
         }
 
         .hero-bg {
@@ -73,41 +76,62 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(255,69,0,0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255,106,51,0.1) 0%, transparent 50%),
-                linear-gradient(180deg, var(--dark-bg) 0%, #16213E 100%);
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .hero-video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(20, 7, 66, 0.7) 0%, rgba(16, 5, 65, 0.85) 100%);
+            z-index: 1;
         }
 
         .floating-orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(1px);
+            filter: blur(40px);
             animation: float 8s ease-in-out infinite;
+            z-index: 2;
         }
 
-        .floating-orb:nth-child(1) {
+        .floating-orb:nth-child(4) {
             width: 300px;
             height: 300px;
-            background: radial-gradient(circle, rgba(255,69,0,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(118, 52, 198, 0.3) 0%, transparent 70%);
             top: 10%;
             right: 10%;
             animation-delay: 0s;
         }
 
-        .floating-orb:nth-child(2) {
+        .floating-orb:nth-child(5) {
             width: 200px;
             height: 200px;
-            background: radial-gradient(circle, rgba(255,106,51,0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(157, 95, 230, 0.25) 0%, transparent 70%);
             bottom: 20%;
             left: 15%;
             animation-delay: -4s;
         }
 
-        .floating-orb:nth-child(3) {
+        .floating-orb:nth-child(6) {
             width: 150px;
             height: 150px;
-            background: radial-gradient(circle, rgba(255,122,0,0.12) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(176, 136, 249, 0.3) 0%, transparent 70%);
             top: 60%;
             right: 30%;
             animation-delay: -2s;
@@ -115,32 +139,40 @@
 
         .hero-content {
             position: relative;
-            z-index: 10;
+            z-index: 100;
         }
 
         .hero-title {
             font-size: clamp(2rem, 6vw, 4rem);
             font-weight: 700;
             line-height: 1.1;
-            margin-bottom: 4rem;
-            background: linear-gradient(135deg, #FFBB01 0%, #FF4500 100%);
+            margin-bottom: 2rem;
+            background: radial-gradient(70.63% 191.91% at 33.63% 100%, #663BCA 3.85%, #7B4CE6 41.83%, #A07CE5 61.54%, #BB9FE4 94.71%, #FBF1E1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title-highlight {
+            background: radial-gradient(70.63% 191.91% at 33.63% 100%, #663BCA 3.85%, #7B4CE6 41.83%, #A07CE5 61.54%, #BB9FE4 94.71%, #FBF1E1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .hero-subtitle {
-            font-size: 1.4rem;
+            font-size: 1rem;
             font-weight: 400;
-            color: #FFD2C2;
-            margin-bottom: 6rem;
+            color: #D5D0E9;
+            margin-bottom: 3rem;
             line-height: 1.6;
+            max-width: 600px;
         }
 
         /* Neo Button Design */
         .cta-button {
             position: relative;
-            background: var(--gradient-1);
+            background: linear-gradient(135deg, #760AF1 0%, #A38FFF 100%);
             border: none;
             padding: 20px 40px;
             font-size: 1.1rem;
@@ -152,7 +184,7 @@
             align-items: center;
             gap: 12px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.3);
+            box-shadow: 0 10px 30px #9900FF80;
             overflow: hidden;
         }
 
@@ -173,49 +205,64 @@
 
         .cta-button:hover {
             transform: translateY(-3px);
-            box-shadow: var(--neon-glow), 0 15px 40px rgba(255, 69, 0, 0.4);
+            box-shadow: 0 0 25px #9900FF80, 0 15px 40px #9900FF80;
             color: white;
         }
 
         /* Cards with Glassmorphism */
         .feature-section {
-            padding: 100px 0;
+            padding: 80px 0;
             position: relative;
         }
 
+        .section-title-highlight {
+            background: linear-gradient(82.47deg, #FAFAFA 58.74%, #6249D7 77.69%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-title-highlight-transform {
+            background: linear-gradient(82.47deg, #F2F2FF 44.79%, #6249D7 77.69%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .feature-card {
-            background: var(--glass-bg);
+            background: #19194D73;
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 69, 0, 0.1);
-            border-radius: 24px;
-            padding: 40px 30px;
+            {#border: 1px solid rgba(118, 52, 198, 0.2);#}
+            border-radius: 20px;
+            padding: 30px 25px;
             text-align: left;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             height: 100%;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(255, 69, 0, 0.3);
-            box-shadow: var(--neon-glow), 0 25px 50px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px);
+            border-color: rgba(118, 52, 198, 0.4);
+            box-shadow: 0 20px 40px rgba(118, 52, 198, 0.2);
         }
 
         .feature-icon {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: var(--gradient-1);
-            border-radius: 15px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 0 20px 0;
-            font-size: 1.5rem;
+            margin: 0 0 16px 0;
+            font-size: 1.3rem;
             color: white;
-            box-shadow: var(--neon-glow);
+            box-shadow: 0 8px 20px rgba(118, 52, 198, 0.3);
         }
 
         .feature-title {
-            font-size: 1rem;
+            font-family: 'Figtree', 'Inter', sans-serif;
+            font-size: 0.85rem;
             font-weight: 700;
             margin-bottom: 12px;
             color: #FFE3D9;
@@ -224,75 +271,71 @@
         }
 
         .feature-text {
-            color: #FFE3D9BF;
+            color: #D5D0E9;
             line-height: 1.8;
             font-size: 0.9rem;
         }
 
         /* Benefits Section with Animated Elements */
         .benefits-section {
-            padding: 100px 0;
-            background: var(--gradient-2);
+            padding: 80px 0;
+            background: linear-gradient(180deg, rgba(118, 52, 198, 0.05) 0%, transparent 100%);
         }
 
         .section-title {
-            font-size: clamp(2rem, 4vw, 3rem);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
             font-weight: 700;
-            margin-bottom: 24px;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 20px;
+            color: var(--text-light);
         }
 
         .section-subtitle {
-            font-size: 1.4rem;
-            color: #FFD2C2;
+            font-size: 1rem;
+            color: #D5D0E9;
             line-height: 1.6;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
 
         .benefit-item {
             display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            margin-bottom: 24px;
-            padding: 20px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 69, 0, 0.1);
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 20px 25px;
+            background: #19194D73;
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            text-align: left;
             transition: all 0.3s ease;
         }
 
         .benefit-item:hover {
-            transform: translateX(10px);
-            border-color: rgba(255, 69, 0, 0.3);
+            transform: translateX(5px);
         }
 
         .benefit-check {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: var(--gradient-1);
-            border-radius: 50%;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1rem;
             flex-shrink: 0;
-            box-shadow: var(--neon-glow);
+            box-shadow: 0 8px 20px rgba(118, 52, 198, 0.3);
         }
 
         .benefit-text {
-            color: #A49FA3;
-            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.95rem;
             line-height: 1.5;
         }
 
         /* CTA Section */
         .cta-section {
-            padding: 100px 0;
+            padding: 80px 0 100px;
             text-align: center;
             background: var(--dark-bg);
             position: relative;
@@ -302,21 +345,21 @@
         .cta-section::before {
             content: '';
             position: absolute;
-            bottom: -200px;
-            left: -200px;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(255, 107, 53, 0.3) 0%, rgba(255, 107, 53, 0.15) 40%, transparent 70%);
+            bottom: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 150, 100, 0.2) 0%, rgba(255, 150, 100, 0.1) 40%, transparent 70%);
             border-radius: 50%;
-            filter: blur(40px);
+            filter: blur(60px);
         }
 
         .cta-title {
-            font-size: clamp(2rem, 4vw, 3rem);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
             font-weight: 700;
-            margin-bottom: 32px;
-            color: #FFE3D9;
-            line-height: 1.3;
+            margin-bottom: 20px;
+            color: var(--text-light);
+            line-height: 1.4;
         }
 
         .cta-highlight {
@@ -337,157 +380,151 @@
         }
 
         @keyframes pulse {
-            0%, 100% { 
+            0%, 100% {
                 box-shadow: var(--neon-glow);
             }
-            50% { 
-                box-shadow: 0 0 30px rgba(255, 69, 0, 0.5);
+            50% {
+                box-shadow: 0 0 30px rgba(118, 52, 198, 0.5);
             }
         }
 
         /* Responsive */
         @media (max-width: 768px) {
+            .navbar-brand img {
+                height: 40px;
+            }
+
             .hero-section {
                 min-height: 100vh;
-                padding-top: 100px;
-                padding-bottom: 60px;
+                padding-top: 0;
+                padding-bottom: 40px;
                 display: flex;
-                align-items: flex-start;
+                align-items: center;
+            }
+
+            .hero-video {
+                min-width: 100%;
+                min-height: 100%;
             }
 
             .hero-content {
-                display: flex;
-                flex-direction: column;
-                height: calc(100vh - 160px);
+                text-align: left;
             }
 
             .hero-title {
-                font-size: 2rem;
-                margin-bottom: 2rem;
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
             }
 
             .hero-subtitle {
-                font-size: 1rem;
-                margin-bottom: 3rem;
+                font-size: 0.9rem;
+                margin-bottom: 2rem;
+                max-width: 100%;
             }
 
             .cta-button {
-                margin-top: auto;
-                margin-bottom: 40px;
-                align-self: flex-start;
-            }
-
-            .col-lg-6:last-child {
-                display: none;
+                padding: 14px 30px;
+                font-size: 0.95rem;
             }
 
             .section-title {
-                font-size: 2rem;
+                font-size: 1.5rem;
                 white-space: normal;
             }
 
             .section-subtitle {
-                font-size: 1rem;
+                font-size: 0.9rem;
+                max-width: 100% !important;
             }
 
             .feature-section, .benefits-section, .cta-section {
-                padding: 60px 0;
+                padding: 50px 0;
             }
 
             .feature-card {
-                padding: 30px 20px;
+                padding: 25px 20px;
             }
 
             .feature-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
             }
 
             .feature-title {
-                font-size: 0.9rem;
+                font-size: 0.8rem;
             }
 
             .feature-text {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
             }
 
             .benefit-item {
-                padding: 15px;
+                padding: 0;
+                margin-bottom: 16px;
             }
 
             .benefit-check {
                 width: 40px;
                 height: 40px;
-                font-size: 1rem;
+                font-size: 0.9rem;
             }
 
             .benefit-text {
-                font-size: 0.95rem;
-            }
-
-            .cta-button {
-                padding: 16px 32px;
-                font-size: 1rem;
+                font-size: 0.85rem;
             }
 
             .cta-title {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
             }
 
             .floating-orb {
                 display: none;
             }
 
-            .col-12 p.section-subtitle {
-                max-width: 100% !important;
+            .col-lg-6:last-child {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-atom me-2"></i>
-                SOLV360°
-            </a>
-        </div>
-    </nav>
-
     <!-- Hero Section -->
     <section class="hero-section">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="{% static 'forms/images/logo-icon-360.png' %}" alt="SOLV360°">
+                </a>
+            </div>
+        </nav>
+
         <div class="hero-bg">
+            <video autoplay muted loop playsinline class="hero-video">
+                <source src="{% static 'forms/movie/video-home.mp4' %}" type="video/mp4">
+            </video>
+            <div class="hero-video-overlay"></div>
             <div class="floating-orb"></div>
             <div class="floating-orb"></div>
             <div class="floating-orb"></div>
         </div>
-        
+
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
+            <div class="row">
+                <div class="col-lg-12">
                     <div class="hero-content">
                         <h1 class="hero-title">
-                            IMPULSIONE SUA&nbsp;<br>
-                            EMPRESA<span style="color: var(--primary-orange);"> COM INOVAÇÃO</span>
+                            IMPULSIONE SUA<br>
+                            <span class="hero-title-highlight">EMPRESA COM INOVAÇÃO</span>
                         </h1>
                         <p class="hero-subtitle">
-      Relatório gratuito, online e personalizado — baseado nos módulos dinâmicos da plataforma Solv e alinhado à ISO 56002, a norma internacional de gestão da inovação.
+                            Relatório gratuito, online e personalizado — baseado nos módulos dinâmicos da plataforma Solv e alinhado à ISO 56002, a norma internacional de gestão da inovação.
                         </p>
                         <a href="{% url 'avaliacao_wizard' %}" class="cta-button">
                             <i class="fas fa-rocket"></i>
                             INICIAR DIAGNÓSTICO
                         </a>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="text-center" style="position: relative;">
-                        <div style="position: relative; display: inline-block;">
-                            <i class="fas fa-brain" style="font-size: 12rem; color: rgba(255, 69, 0, 0.2); animation: pulse 3s infinite;"></i>
-                            <i class="fas fa-cog" style="position: absolute; top: 20%; right: 10%; font-size: 2rem; color: var(--primary-orange); animation: float 4s infinite;"></i>
-                            <i class="fas fa-lightbulb" style="position: absolute; bottom: 20%; left: 10%; font-size: 2rem; color: var(--secondary-orange); animation: float 4s infinite reverse;"></i>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -497,10 +534,10 @@
     <!-- Features Section -->
     <section class="feature-section">
         <div class="container">
-            <div class="row mb-5">
+            <div class="row mb-4">
                 <div class="col-12">
-                    <h2 class="section-title">ANÁLISE MULTIDIMENSIONAL</h2>
-                    <p class="section-subtitle" style="color: #ffffff; max-width: 66%;">
+                    <h2 class="section-title">ANÁLISE <span class="section-title-highlight">MULTIDIMENSIONAL</span></h2>
+                    <p class="section-subtitle" style="max-width: 70%;">
                         Utilizamos inteligência artificial e avaliamos sua organização de forma holística, considerando os pilares da norma internacional ISO 56002 para gestão da inovação, a fim de identificar pontos fortes, oportunidades e caminhos de evolução.
                     </p>
                 </div>
@@ -598,20 +635,18 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h2 class="section-title">TRANSFORME SUA EMPRESA</h2>
-                    <p class="section-subtitle">
-                        Descubra oportunidades ocultas e acelere sua jornada de inovação 
-                        com insights baseados em dados e benchmarks de mercado.
+                    <h2 class="section-title">TRANSFOR<span class="section-title-highlight-transform">ME SUA</span><br>EMPRESA</h2>
+                    <p class="section-subtitle" style="margin-bottom: 30px;">
+                        Descubra oportunidades ocultas e acelere sua jornada de inovação com insights baseados em dados e benchmarks de mercado.
                     </p>
-                    
+
                     <div class="benefits-list">
                         <div class="benefit-item">
                             <div class="benefit-check">
-                                <i class="fas fa-search-plus"></i>
+                                <i class="fas fa-search"></i>
                             </div>
                             <div class="benefit-text">
-                                <strong>Identifique gaps críticos</strong> no seu processo de inovação 
-                                com precisão cirúrgica
+                                Identifique gaps críticos no seu processo de inovação com precisão cirúrgica
                             </div>
                         </div>
                         <div class="benefit-item">
@@ -619,8 +654,7 @@
                                 <i class="fas fa-trophy"></i>
                             </div>
                             <div class="benefit-text">
-                                <strong>Compare-se com líderes</strong> do mercado e entenda 
-                                seu posicionamento competitivo
+                                Compare-se com líderes do mercado e entenda seu posicionamento competitivo
                             </div>
                         </div>
                         <div class="benefit-item">
@@ -628,27 +662,22 @@
                                 <i class="fas fa-rocket"></i>
                             </div>
                             <div class="benefit-text">
-                                <strong>Receba um roadmap detalhado</strong> com ações prioritárias 
-                                para acelerar seus resultados
+                                Receba um roadmap detalhado com ações prioritárias para acelerar seus resultados
                             </div>
                         </div>
                         <div class="benefit-item">
                             <div class="benefit-check">
-                                <i class="fas fa-brain"></i>
+                                <i class="fas fa-bullhorn"></i>
                             </div>
                             <div class="benefit-text">
-                                <strong>Insights powered by AI</strong> personalizados para 
-                                o contexto específico da sua organização
+                                Insights powered by AI personalizados para o contexto específico da sua organização
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 text-center">
-                    <div style="position: relative;">
-                        <i class="fas fa-atom" style="font-size: 15rem; color: rgba(255, 69, 0, 0.15); animation: float 6s infinite;"></i>
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                            <i class="fas fa-chart-line" style="font-size: 4rem; color: var(--primary-orange); animation: pulse 2s infinite;"></i>
-                        </div>
+                    <div style="position: relative; padding: 40px;">
+                        <img src="{% static 'forms/images/transforme-logo.png' %}" alt="Transformação" style="max-width: 100%; height: auto;">
                     </div>
                 </div>
             </div>
@@ -661,14 +690,13 @@
             <div class="row">
                 <div class="col-lg-10 mx-auto">
                     <h2 class="cta-title">
-                        Pronto para descobrir o <span class="cta-highlight">potencial inovador</span> 
-                        da sua empresa?
+                        Pronto para descobrir o <span class="cta-highlight">potencial inovador</span> da<br>sua empresa?
                     </h2>
-                    <p class="hero-subtitle">
+                    <p class="section-subtitle" style="text-align: center; margin: 0 auto 30px;">
                         Junte-se a centenas de empresas que já transformaram sua gestão de inovação
                     </p>
-                    <div class="mt-4">
-                        <a href="{% url 'avaliacao_wizard' %}" class="cta-button me-3">
+                    <div>
+                        <a href="{% url 'avaliacao_wizard' %}" class="cta-button">
                             <i class="fas fa-rocket"></i>
                             INICIAR DIAGNÓSTICO
                         </a>
