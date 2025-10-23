@@ -1,14 +1,19 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}SOLV360° | Diagnóstico de Inovação{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>{% block title %}SOLV360° | Diagnóstico de
+        Inovação{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
     <style>
-         .circle {
+        .circle {
             width: 350px;
             height: 350px;
             background: #FFDAA6;
@@ -17,6 +22,10 @@
             animation: pulse-circle 8s ease-in-out infinite;
         }
 
+        .icon{
+            width: 14px;
+            height: 14px;
+        }
         @keyframes pulse-circle {
             0%, 100% {
                 transform: translateX(-50%) scale(0.5);
@@ -34,6 +43,7 @@
                 transform: translateY(0%) scale(1);
             }
         }
+
         :root {
             --primary-purple: #7634C6;
             --secondary-purple: #9D5FE6;
@@ -78,7 +88,6 @@
 
             z-index: -1;
         }
-
 
 
         /* Floating Particles */
@@ -184,46 +193,51 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             animation: progress-shine 2s ease-in-out infinite;
         }
 
         @keyframes progress-shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
         }
 
 
         /* Main Container */
         .form-container {
+            width: 100%;
             background: #1E1150;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(118, 52, 198, 0.2);
             border-radius: 24px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             position: relative;
             z-index: 10;
         }
-#wizard-form{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow: hidden;
-}
-        .form{
-            {#background: red;#}
+
+        #wizard-form {
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .form {
+        {#background: red;#} width: 100%;
             overflow-y: scroll;
             flex-grow: 1;
 
-            {#box-shadow: inset 5px 5px red;#}
-            padding-right: 15px; /* for scrollbar */
+        {#box-shadow: inset 5px 5px red;#} padding-right: 15px; /* for scrollbar */
             padding-bottom: 30px;
         }
 
-        .form::after{
+        .form::after {
             content: '';
             position: absolute;
             bottom: 92px;
@@ -231,8 +245,9 @@
             display: block;
             width: 92%;
             height: 20px;
-            background: linear-gradient(180deg,rgba(255, 255, 255, 0) 0%, #1E1150);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #1E1150);
         }
+
         .form-body {
             padding: 25px 30px;
             position: relative;
@@ -367,7 +382,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -404,7 +419,7 @@
             border: 2px solid rgba(118, 52, 198, 0.3);
             color: var(--primary-purple);
             border-radius: 50px;
-            padding: 12px 24px;
+            padding: 6px 12px;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
@@ -434,22 +449,32 @@
             color: var(--primary-purple);
         }
 
+        .form-container {
+            width: 682px;
+        {#width: 100%;#}
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             /* Container overflow fix for mobile */
+            .hidden-mobile{
+                display: none;
+            }
             html, body {
                 max-width: 100vw;
                 position: relative;
             }
 
+            .form-container  {
+                width: 100%;
+            }
+
             .container, .row {
+
                 max-width: 100%;
                 overflow-x: hidden;
             }
 
-            .form-container {
-                max-width: 100%;
-            }
 
             .form-header, .form-body {
                 padding: 24px;
@@ -498,58 +523,59 @@
         }
 
         /* Alinhar input + texto na horizontal */
-.question-options .form-check {
-  display: flex !important;
-  align-items: center !important;
-  {#gap: 12px !important;#}
-}
+        .question-options .form-check {
+            display: flex !important;
+            align-items: center !important;
+        {#gap: 12px !important;#}
+        }
 
-.question-options .form-check-input {
-  margin: 0 !important;
-}
+        .question-options .form-check-input {
+            margin: 0 !important;
+        }
 
-.question-options .form-check-label {
-  margin: 0 !important;
-  flex: 1 !important;
-}
+        .question-options .form-check-label {
+            margin: 0 !important;
+            flex: 1 !important;
+        }
 
     </style>
 </head>
 <body>
-    <!-- Floating Particles -->
-    <div class="floating-particles">
-        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
-        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
-        <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
-        <div class="particle" style="left: 50%; animation-delay: 1s;"></div>
-        <div class="particle" style="left: 60%; animation-delay: 3s;"></div>
-        <div class="particle" style="left: 70%; animation-delay: 5s;"></div>
-        <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
-        <div class="particle" style="left: 90%; animation-delay: 2s;"></div>
-    </div>
+<!-- Floating Particles -->
+<div class="floating-particles">
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 1s;"></div>
+    <div class="particle" style="left: 60%; animation-delay: 3s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 5s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 2s;"></div>
+</div>
 
-    <div class="container py-3  d-flex "  style="justify-content: center!important;">
-        <div class="row justify-content-center">
-            <div class="col-xs-12 col-lg-8">
-                <div class="mb-3">
-                    <a href="/" class="btn-back-home">
-                        <i class="fas fa-arrow-left"></i>
-                        Voltar ao início
-                    </a>
-                </div>
-                
-                <div class="form-container">
-                    {% block header %}{% endblock %}
-                    <div class="form-body">
-                        {% block content %}{% endblock %}
-                    </div>
+<div class="container py-3  d-flex "
+     style="justify-content: center!important;">
+    <div class="row justify-content-center" style="width: 100%">
+        <div class="col-xs-12 col-lg-8">
+            <div class="mb-3">
+                <a href="/" class="btn-back-home">
+                    <i class="fas fa-arrow-left"></i>
+                    Voltar ao início
+                </a>
+            </div>
+
+            <div class="form-container">
+                {% block header %}{% endblock %}
+                <div class="form-body">
+                    {% block content %}{% endblock %}
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {% block extra_js %}{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>
