@@ -37,8 +37,10 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--dark-bg);
+            max-width: 100vw;
+            max-height: 100vh;
             color: var(--text-light);
-            overflow-x: hidden;
+            overflow-x: hidden !important;
         }
 
         .circle {
@@ -52,6 +54,7 @@
 
         @keyframes pulse-circle {
             0%, 100% {
+
                 transform: translateX(-50%) scale(0.5);
             }
             50% {
@@ -418,7 +421,7 @@
             text-align: center;
             background: rgba(16, 5, 65, 0.58);
             position: relative;
-            overflow: hidden;
+            {#overflow: hidden;#}
 
             & .circle:nth-of-type(1) {
                 position: absolute;
@@ -431,17 +434,17 @@
             }
         }
 
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            bottom: -100px;
-            right: -100px;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255, 150, 100, 0.2) 0%, rgba(255, 150, 100, 0.1) 40%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(60px);
-        }
+        {#.cta-section::before {#}
+        {#    content: '';#}
+        {#    position: absolute;#}
+        {#    bottom: -100px;#}
+        {#    right: -100px;#}
+        {#    width: 400px;#}
+        {#    height: 400px;#}
+        {#    background: radial-gradient(circle, rgba(255, 150, 100, 0.2) 0%, rgba(255, 150, 100, 0.1) 40%, transparent 70%);#}
+        {#    border-radius: 50%;#}
+        {#    filter: blur(60px);#}
+        {#}#}
 
         .cta-title {
             font-size: clamp(1.8rem, 4vw, 2.5rem);
@@ -481,7 +484,7 @@
         @media (max-width: 768px) {
             /* Container overflow fix for mobile */
             html, body {
-                max-width: 100vw;
+
                 position: relative;
             }
 

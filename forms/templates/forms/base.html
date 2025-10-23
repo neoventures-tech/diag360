@@ -217,7 +217,21 @@
             width: 100%;
             overflow-y: scroll;
             flex-grow: 1;
+
+            {#box-shadow: inset 5px 5px red;#}
             padding-right: 15px; /* for scrollbar */
+            padding-bottom: 30px;
+        }
+
+        .form::after{
+            content: '';
+            position: absolute;
+            bottom: 92px;
+            left: 16px;
+            display: block;
+            width: 92%;
+            height: 20px;
+            background: linear-gradient(180deg,rgba(255, 255, 255, 0) 0%, #1E1150);
         }
         .form-body {
             padding: 25px 30px;
@@ -515,9 +529,9 @@
         <div class="particle" style="left: 90%; animation-delay: 2s;"></div>
     </div>
 
-    <div class="container py-3"  style="justify-items: center!important;">
+    <div class="container py-3  d-flex "  style="justify-content: center!important;">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-xs-12 col-lg-8">
                 <div class="mb-3">
                     <a href="/" class="btn-back-home">
                         <i class="fas fa-arrow-left"></i>
