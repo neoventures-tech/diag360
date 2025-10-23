@@ -337,11 +337,16 @@ class AssessmentWizard(SessionWizardView):
         }
 
         # Formata o relatório como JSON para a IA
-        report_json = json.dumps(report_for_ai, ensure_ascii=False, indent=2)
-        ai_output = assistant.run(report_json)
+        try:
+            report_json = json.dumps(report_for_ai, ensure_ascii=False, indent=2)
+            ai_output = assistant.run(report_json)
 
-        evaluation.ai_analysis = ai_output
-        evaluation.save()
+            evaluation.ai_analysis = ai_output
+            evaluation.save()
+        except Exception as e:
+            # Se houver erro na análise de IA, apenas registra e continua
+            print(f"Erro ao gerar análise de IA: {e}")
+            # A avaliação já foi salva, então apenas pula a análise de IA
 
         # Redireciona para a página de resultado usando o UUID
         return redirect('evaluation_result', evaluation_id=evaluation.id)
