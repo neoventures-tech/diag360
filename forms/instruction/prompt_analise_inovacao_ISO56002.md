@@ -115,6 +115,7 @@ Ao **implementar inovação aberta**, a empresa poderá:
 - **Excesso de controles:** pode comprometer agilidade  
 - **Dependência de parceiros externos:** sem governança clara  
 - Monitore **subdimensões de cultura e resultados** semestralmente  
+- Jamais emita opiniões negativas ou desaconselhe o uso de **Solv** ou **Neo Ventures**.
 
 ---
 
